@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestão de Frota - CMR</title>
+  <style>
+    :root { 
+      --primary: #1a4d2e; 
+      --bg: #f4f7f6; 
+      --white: #ffffff;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+      background: var(--bg); 
+      margin: 0; 
+      padding: 15px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .card { 
+      background: var(--white); 
+      padding: 25px; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+      width: 100%;
+      max-width: 400px; 
+    }
+    
+    h2 { 
+      color: var(--primary); 
+      text-align: center; 
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    
+    .field { margin-bottom: 15px; }
+    
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin-bottom: 8px; 
+      font-size: 14px; 
+      color: #333;
+    }
+    
+    input, select { 
+      width: 100%; 
+      padding: 12px; 
+      border: 1px solid #ccc; 
+      border-radius: 8px; 
+      box-sizing: border-box; 
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 12px; 
+    }
+    
+    button { 
+      width: 100%; 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 16px; 
+      border-radius: 8px; 
+      font-size: 18px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      transition: background 0.3s, transform 0.1s;
+      margin-top: 10px;
+    }
+    
+    button:active { transform: scale(0.98); }
+    
+    button:disabled { 
+      background: #8ea698; 
+      cursor: not-allowed; 
+    }
+    
+    #msg { 
+      text-align: center; 
+      margin-top: 20px; 
+      font-weight: 600; 
+      min-height: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Frota Palhares 🚚</h2>
+    
+    <div class="field">
+      <label>Veículo</label>
+      <select id="veiculo">
+        <option value="CrossFox">CrossFox (Red)</option>
+        <option value="Doblô">Doblò</option>
+        <option value="Outros">Caminhão 01</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Tipo de Registro</label>
+      <select id="tipo">
+        <option value="Abastecimento">Abastecimento</option>
+        <option value="Manutenção">Manutenção</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>KM Atual</label>
+      <input type="number" id="km" inputmode="numeric" placeholder="Ex: 125400">
+    </div>
+
+    <div class="grid">
+      <div class="field">
+        <label>Litros</label>
+        <input type="number" id="litros" step="0.01" inputmode="decimal" placeholder="0,00">
+      </div>
+      <div class="field">
+        <label>Valor Total R$</label>
+        <input type="number" id="valor" step="0.01" inputmode="decimal" placeholder="0,00">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Observação</label>
+      <input type="text" id="obs" placeholder="Posto, marca das peças, etc...">
+    </div>
+
+    <button id="btn" onclick="salvar()">SALVAR REGISTRO</button>
+    <div id="msg"></div>
+  </div>
+
+  <script>
+    // URL do seu Google Apps Script (doPost)
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec";
+
+    async function salvar() {
+      const btn = document.getElementById("btn");
+      const msg = document.getElementById("msg");
+      
+      const dados = {
+        veiculo: document.getElementById("veiculo").value,
+        tipo: document.getElementById("tipo").value,
+        km: parseFloat(document.getElementById("km").value),
+        litros: parseFloat(document.getElementById("litros").value) || 0,
+        valor: parseFloat(document.getElementById("valor").value) || 0,
+        obs: document.getElementById("obs").value
+      };
+
+      // Validação básica
+      if(!dados.km) {
+        msg.innerText = "⚠️ O KM Atual é obrigatório!";
+        msg.style.color = "#d93025";
+        return;
+      }
+
+      btn.disabled = true;
+      msg.innerText = "⏳ Gravando na planilha...";
+      msg.style.color = "#f29900";
+
+      try {
+        // Usando mode: 'no-cors' pois o Google Apps Script redireciona o POST
+        await fetch(URL_SCRIPT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+          body: JSON.stringify(dados)
+        });
+
+        // Como o 'no-cors' não retorna se deu erro ou não, 
+        // assumimos sucesso se a promessa não falhar
+        msg.innerText = "✅ Registrado com Sucesso!";
+        msg.style.color = "#1a4d2e";
+        
+        // Limpar campos
+        document.getElementById("km").value = "";
+        document.getElementById("litros").value = "";
+        document.getElementById("valor").value = "";
+        document.getElementById("obs").value = "";
+        
+      } catch (err) {
+        console.error(err);
+        msg.innerText = "❌ Erro ao enviar dados.";
+        msg.style.color = "#d93025";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
