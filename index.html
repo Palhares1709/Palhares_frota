@@ -3,37 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema Frota Palhares</title>
+  <title>Frota Palhares</title>
   <style>
-    :root { --primary: #1a4d2e; --error: #d32f2f; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    :root { --primary: #1a4d2e; --error: #c0392b; --success: #27ae60; }
+    body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; margin: 0; padding: 20px; display: flex; justify-content: center; }
     
-    .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
-    h2 { color: var(--primary); text-align: center; font-size: 28px; margin-bottom: 20px; }
+    .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 100%; max-width: 420px; margin: auto; }
+    h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 26px; }
 
-    /* Alerta de Erro Moderno e Gigante */
-    #alerta-erro {
+    #modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(211, 47, 47, 0.95); z-index: 9999; color: white;
-      flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;
+      background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
     }
-    #alerta-erro h1 { font-size: 80px; margin: 0; }
-    #alerta-erro p { font-size: 24px; font-weight: bold; margin: 20px 0; }
-
-    .field { margin-bottom: 15px; }
-    label { display: block; font-weight: bold; margin-bottom: 8px; color: #444; }
-    input, select { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 18px; box-sizing: border-box; }
+    .modal-content {
+      background: white; padding: 40px; border-radius: 20px; text-align: center;
+      width: 85%; max-width: 400px; animation: bounce 0.4s ease;
+    }
+    @keyframes bounce { 0% {transform: scale(0.7);} 100% {transform: scale(1);} }
     
-    .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 20px; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; }
-    .btn-save:disabled { background: #ccc; }
+    #modal-msg { font-size: 24px; font-weight: bold; margin-bottom: 20px; display: block; }
+    .btn-fechar { background: #333; color: white; padding: 12px 30px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
+
+    .field { margin-bottom: 12px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; font-size: 14px; }
+    input, select { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; }
+    input:focus { border-color: var(--primary); }
+    
+    .btn-principal { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+    .btn-principal:disabled { background: #999; }
   </style>
 </head>
 <body>
 
-  <div id="alerta-erro">
-    <h1>⚠️</h1>
-    <p id="erro-txt">KM INVÁLIDO!</p>
-    <button onclick="fecharErro()" style="padding: 15px 40px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;">CORRIGIR AGORA</button>
+  <div id="modal">
+    <div class="modal-content">
+      <span id="modal-msg"></span>
+      <button class="btn-fechar" onclick="fecharModal()">OK, ENTENDI</button>
+    </div>
   </div>
 
   <div class="card">
@@ -48,58 +54,83 @@
     </div>
 
     <div class="field">
-      <label>KM Atual</label>
+      <label>Tipo de Registro</label>
+      <select id="tipo">
+        <option value="Abastecimento">Abastecimento</option>
+        <option value="Manutenção">Manutenção</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>KM ATUAL</label>
       <input type="number" id="km" inputmode="numeric" placeholder="000.000">
     </div>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
       <div class="field">
         <label>Litros</label>
-        <input type="number" id="litros" step="0.01">
+        <input type="number" id="litros" step="0.01" inputmode="decimal">
       </div>
       <div class="field">
         <label>Valor Total R$</label>
-        <input type="number" id="valor" step="0.01">
+        <input type="number" id="valor" step="0.01" inputmode="decimal">
       </div>
     </div>
 
-    <button id="btn" class="btn-save" onclick="validarESalvar()">SALVAR REGISTRO</button>
+    <div class="field">
+      <label>Observação</label>
+      <input type="text" id="obs" placeholder="Ex: Posto tal, Troca de óleo...">
+    </div>
+
+    <button id="btn-save" class="btn-principal" onclick="processarEnvio()">SALVAR REGISTRO</button>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; // <--- COLE A NOVA URL DO GOOGLE AQUI
+    const SCRIPT_URL = "SUA_URL_DO_GOOGLE_SCRIPT_AQUI"; 
 
-    function fecharErro() { document.getElementById("alerta-erro").style.display = "none"; }
+    function abrirModal(texto, cor) {
+      const modal = document.getElementById("modal");
+      const msg = document.getElementById("modal-msg");
+      msg.innerText = texto;
+      msg.style.color = cor;
+      modal.style.display = "flex";
+    }
 
-    async function validarESalvar() {
-      const btn = document.getElementById("btn");
+    function fecharModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    async function processarEnvio() {
+      const btn = document.getElementById("btn-save");
       const veiculo = document.getElementById("veiculo").value;
       const kmDigitado = parseFloat(document.getElementById("km").value);
 
-      if(!kmDigitado) return;
+      if(!kmDigitado) {
+        abrirModal("⚠️ DIGITE O KM!", "orange");
+        return;
+      }
 
       btn.disabled = true;
-      btn.innerText = "VERIFICANDO KM...";
+      btn.innerText = "VERIFICANDO...";
 
       try {
-        // Busca o último KM direto na planilha antes de salvar
-        const res = await fetch(`${SCRIPT_URL}?getUltimoKM=${veiculo}`);
-        const ultimoKM = parseFloat(await res.text());
+        const response = await fetch(`${SCRIPT_URL}?getUltimoKM=${veiculo}`);
+        const ultimoKM = parseFloat(await response.text());
 
         if (kmDigitado <= ultimoKM) {
-          document.getElementById("erro-txt").innerHTML = `ERRO CRÍTICO!<br>O KM ${kmDigitado} é menor ou igual ao último registro (${ultimoKM}).`;
-          document.getElementById("alerta-erro").style.display = "flex";
+          abrirModal(`❌ ERRO: KM ATUAL (${kmDigitado}) É MENOR OU IGUAL AO ÚLTIMO (${ultimoKM})!`, "var(--error)");
           btn.disabled = false;
           btn.innerText = "SALVAR REGISTRO";
           return;
         }
 
-        // Se o KM for válido, prossegue com o salvamento
         const dados = {
           veiculo: veiculo,
+          tipo: document.getElementById("tipo").value, // Captura o tipo
           km: kmDigitado,
           litros: parseFloat(document.getElementById("litros").value) || 0,
-          valor: parseFloat(document.getElementById("valor").value) || 0
+          valor: parseFloat(document.getElementById("valor").value) || 0,
+          obs: document.getElementById("obs").value // Captura a observação
         };
 
         await fetch(SCRIPT_URL, {
@@ -108,12 +139,19 @@
           body: JSON.stringify(dados)
         });
 
-        alert("✅ REGISTRADO COM SUCESSO!");
-        location.reload();
+        abrirModal("✅ REGISTRO SALVO COM SUCESSO!", "var(--success)");
+        
+        // Limpa os campos
+        document.getElementById("km").value = "";
+        document.getElementById("litros").value = "";
+        document.getElementById("valor").value = "";
+        document.getElementById("obs").value = "";
 
       } catch (e) {
-        alert("Erro de conexão com a planilha.");
+        abrirModal("❌ ERRO DE CONEXÃO!", "var(--error)");
+      } finally {
         btn.disabled = false;
+        btn.innerText = "SALVAR REGISTRO";
       }
     }
   </script>
