@@ -3,57 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema Frota Palhares</title>
+  <title>Frota Palhares</title>
   <style>
     :root { --primary: #1a4d2e; --error: #d32f2f; --success: #2e7d32; }
     body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
     
-    .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); max-width: 400px; margin: auto; }
+    .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); max-width: 400px; margin: auto; display: none; }
     h2 { color: var(--primary); text-align: center; margin-bottom: 25px; }
 
-    /* Notificação Moderna */
     #aviso {
-      display: none;
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 500px;
-      padding: 20px;
-      border-radius: 12px;
-      color: white;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      z-index: 1000;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-      animation: slideIn 0.5s ease-out;
+      display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      width: 90%; max-width: 500px; padding: 20px; border-radius: 12px; color: white;
+      text-align: center; font-size: 20px; font-weight: bold; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     }
-
-    @keyframes slideIn { from { top: -100px; } to { top: 20px; } }
 
     .field { margin-bottom: 15px; }
     label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
     input, select { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-    input:focus { border-color: var(--primary); outline: none; }
     
     button { 
       width: 100%; background: var(--primary); color: white; border: none; 
       padding: 18px; border-radius: 10px; font-size: 18px; font-weight: bold; 
-      cursor: pointer; transition: 0.3s; margin-top: 10px;
+      cursor: pointer; margin-top: 10px;
     }
-    button:active { transform: scale(0.95); }
-    button:disabled { background: #ccc; }
+    
+    /* Tela de Login */
+    #login-screen { display: block; }
   </style>
 </head>
 <body>
 
   <div id="aviso"></div>
 
-  <div class="card">
+  <div id="login-screen" class="card">
+    <h2>Acesso Frota 🔑</h2>
+    <div class="field">
+      <label>Senha de Acesso</label>
+      <input type="password" id="senha" placeholder="Digite a senha...">
+    </div>
+    <button onclick="entrar()">ENTRAR</button>
+  </div>
+
+  <div id="form-screen" class="card">
     <h2>FROTA PALHARES 🚚</h2>
-    
     <div class="field">
       <label>Veículo</label>
       <select id="veiculo">
@@ -61,45 +53,71 @@
         <option value="Doblò">Doblò</option>
       </select>
     </div>
-
     <div class="field">
       <label>KM Atual</label>
-      <input type="number" id="km" inputmode="numeric" placeholder="000000">
+      <input type="number" id="km" inputmode="numeric">
     </div>
-
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
       <div class="field">
         <label>Litros</label>
-        <input type="number" id="litros" step="0.01" inputmode="decimal">
+        <input type="number" id="litros" step="0.01">
       </div>
       <div class="field">
         <label>Valor Total R$</label>
-        <input type="number" id="valor" step="0.01" inputmode="decimal">
+        <input type="number" id="valor" step="0.01">
       </div>
     </div>
-
     <div class="field">
       <label>Observação</label>
       <input type="text" id="obs">
     </div>
-
-    <button id="btn" onclick="validarESalvar()">SALVAR REGISTRO</button>
+    <button id="btn-save" onclick="salvar()">SALVAR REGISTRO</button>
+    <button onclick="sair()" style="background:#666; font-size:14px; padding:10px;">SAIR</button>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; // <--- COLOQUE AQUI A URL DO GOOGLE
+    const SCRIPT_URL = "SUA_URL_DO_GOOGLE_SCRIPT_AQUI"; 
+    const SENHA_CORRETA = "123"; // Altere para sua senha
+
+    // Verifica se já está logado ao abrir a página
+    window.onload = () => {
+      if(sessionStorage.getItem("logado") === "true") {
+        mostrarForm();
+      } else {
+        document.getElementById("login-screen").style.display = "block";
+      }
+    };
+
+    function entrar() {
+      const senha = document.getElementById("senha").value;
+      if(senha === SENHA_CORRETA) {
+        sessionStorage.setItem("logado", "true");
+        mostrarForm();
+      } else {
+        alert("Senha incorreta!");
+      }
+    }
+
+    function mostrarForm() {
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("form-screen").style.display = "block";
+    }
+
+    function sair() {
+      sessionStorage.removeItem("logado");
+      location.reload();
+    }
 
     function mostrarAviso(texto, tipo) {
       const aviso = document.getElementById("aviso");
       aviso.innerText = texto;
       aviso.style.display = "block";
       aviso.style.backgroundColor = tipo === 'erro' ? 'var(--error)' : 'var(--success)';
-      
-      setTimeout(() => { aviso.style.display = "none"; }, 5000);
+      setTimeout(() => { aviso.style.display = "none"; }, 4000);
     }
 
-    async function validarESalvar() {
-      const btn = document.getElementById("btn");
+    async function salvar() {
+      const btn = document.getElementById("btn-save");
       const dados = {
         veiculo: document.getElementById("veiculo").value,
         km: parseFloat(document.getElementById("km").value),
@@ -110,7 +128,7 @@
       };
 
       if(!dados.km) {
-        mostrarAviso("⚠️ DIGITE O KM ATUAL!", "erro");
+        mostrarAviso("⚠️ DIGITE O KM!", "erro");
         return;
       }
 
@@ -118,18 +136,19 @@
       btn.innerText = "GRAVANDO...";
 
       try {
+        // O segredo para salvar do GitHub é o mode: 'no-cors'
         await fetch(SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           body: JSON.stringify(dados)
         });
 
-        mostrarAviso("✅ REGISTRADO COM SUCESSO!", "success");
+        mostrarAviso("✅ SALVO NA PLANILHA!", "success");
         document.getElementById("km").value = "";
         document.getElementById("litros").value = "";
         document.getElementById("valor").value = "";
       } catch (e) {
-        mostrarAviso("❌ ERRO DE CONEXÃO!", "erro");
+        mostrarAviso("❌ ERRO AO SALVAR!", "erro");
       } finally {
         btn.disabled = false;
         btn.innerText = "SALVAR REGISTRO";
