@@ -3,225 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frota Palhares - Abastecimento</title>
+  <title>Sistema Frota Palhares</title>
   <style>
-    :root { 
-      --primary: #1a4d2e; 
-      --bg: #f4f7f6; 
-      --accent: #2ecc71;
-    }
+    :root { --primary: #1a4d2e; --error: #d32f2f; --success: #2e7d32; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
     
-    body { 
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background: var(--bg); 
-      margin: 0; 
-      padding: 15px; 
-      display: flex;
-      justify-content: center;
+    .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); max-width: 400px; margin: auto; }
+    h2 { color: var(--primary); text-align: center; margin-bottom: 25px; }
+
+    /* Notificação Moderna */
+    #aviso {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 500px;
+      padding: 20px;
+      border-radius: 12px;
+      color: white;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      z-index: 1000;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: slideIn 0.5s ease-out;
     }
 
-    .card { 
-      background: white; 
-      padding: 25px; 
-      border-radius: 15px; 
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-      width: 100%;
-      max-width: 400px; 
-    }
-
-    h2 { 
-      color: var(--primary); 
-      text-align: center; 
-      margin-bottom: 20px;
-      font-size: 24px;
-    }
+    @keyframes slideIn { from { top: -100px; } to { top: 20px; } }
 
     .field { margin-bottom: 15px; }
-
-    label { 
-      display: block; 
-      font-weight: 600; 
-      margin-bottom: 8px; 
-      font-size: 14px; 
-      color: #444;
-    }
-
-    input, select { 
-      width: 100%; 
-      padding: 12px; 
-      border: 1px solid #ddd; 
-      border-radius: 8px; 
-      box-sizing: border-box; 
-      font-size: 16px;
-      outline: none;
-      transition: border 0.3s;
-    }
-
-    input:focus { border-color: var(--primary); }
-
-    .grid { 
-      display: grid; 
-      grid-template-columns: 1fr 1fr; 
-      gap: 12px; 
-    }
-
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+    input, select { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+    input:focus { border-color: var(--primary); outline: none; }
+    
     button { 
-      width: 100%; 
-      background: var(--primary); 
-      color: white; 
-      border: none; 
-      padding: 16px; 
-      border-radius: 8px; 
-      font-size: 18px; 
-      font-weight: bold; 
-      cursor: pointer; 
-      transition: background 0.3s, transform 0.1s;
-      margin-top: 10px;
+      width: 100%; background: var(--primary); color: white; border: none; 
+      padding: 18px; border-radius: 10px; font-size: 18px; font-weight: bold; 
+      cursor: pointer; transition: 0.3s; margin-top: 10px;
     }
-
-    button:active { transform: scale(0.98); }
-    button:disabled { background: #95a5a6; cursor: not-allowed; }
-
-    #msg { 
-      text-align: center; 
-      margin-top: 20px; 
-      font-weight: 600; 
-      min-height: 24px;
-      padding: 10px;
-      border-radius: 5px;
-    }
-
-    .loader {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid var(--primary);
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 10px;
-      display: none;
-    }
-
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    button:active { transform: scale(0.95); }
+    button:disabled { background: #ccc; }
   </style>
 </head>
 <body>
 
+  <div id="aviso"></div>
+
   <div class="card">
-    <h2>Frota Palhares 🚚</h2>
+    <h2>FROTA PALHARES 🚚</h2>
     
     <div class="field">
       <label>Veículo</label>
       <select id="veiculo">
         <option value="CrossFox">CrossFox (Red)</option>
         <option value="Doblò">Doblò</option>
-        <option value="Caminhão 01">Caminhão 01</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>Tipo de Registro</label>
-      <select id="tipo">
-        <option value="Abastecimento">Abastecimento</option>
-        <option value="Manutenção">Manutenção</option>
       </select>
     </div>
 
     <div class="field">
       <label>KM Atual</label>
-      <input type="number" id="km" inputmode="numeric" placeholder="Ex: 125430">
+      <input type="number" id="km" inputmode="numeric" placeholder="000000">
     </div>
 
-    <div class="grid">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
       <div class="field">
         <label>Litros</label>
-        <input type="number" id="litros" step="0.01" inputmode="decimal" placeholder="0,00">
+        <input type="number" id="litros" step="0.01" inputmode="decimal">
       </div>
       <div class="field">
-        <label>Valor Total (R$)</label>
-        <input type="number" id="valor" step="0.01" inputmode="decimal" placeholder="0,00">
+        <label>Valor Total R$</label>
+        <input type="number" id="valor" step="0.01" inputmode="decimal">
       </div>
     </div>
 
     <div class="field">
       <label>Observação</label>
-      <input type="text" id="obs" placeholder="Posto, marca do óleo, etc.">
+      <input type="text" id="obs">
     </div>
 
-    <button id="btn" onclick="salvar()">
-      <span id="loader" class="loader"></span>
-      SALVAR REGISTRO
-    </button>
-    
-    <div id="msg"></div>
+    <button id="btn" onclick="validarESalvar()">SALVAR REGISTRO</button>
   </div>
 
   <script>
-    // URL DO SEU GOOGLE APPS SCRIPT (SUBSTITUA AQUI!)
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec";
+    const SCRIPT_URL = "SUA_URL_AQUI"; // <--- COLOQUE AQUI A URL DO GOOGLE
 
-    async function salvar() {
-      const btn = document.getElementById("btn");
-      const msg = document.getElementById("msg");
-      const loader = document.getElementById("loader");
+    function mostrarAviso(texto, tipo) {
+      const aviso = document.getElementById("aviso");
+      aviso.innerText = texto;
+      aviso.style.display = "block";
+      aviso.style.backgroundColor = tipo === 'erro' ? 'var(--error)' : 'var(--success)';
       
-      // Captura de dados
+      setTimeout(() => { aviso.style.display = "none"; }, 5000);
+    }
+
+    async function validarESalvar() {
+      const btn = document.getElementById("btn");
       const dados = {
         veiculo: document.getElementById("veiculo").value,
-        tipo: document.getElementById("tipo").value,
         km: parseFloat(document.getElementById("km").value),
         litros: parseFloat(document.getElementById("litros").value) || 0,
         valor: parseFloat(document.getElementById("valor").value) || 0,
-        obs: document.getElementById("obs").value
+        obs: document.getElementById("obs").value,
+        tipo: "Abastecimento"
       };
 
-      // Validação básica
-      if(!dados.km || dados.km <= 0) {
-        exibirMensagem("⚠️ Informe um KM válido!", "orange");
+      if(!dados.km) {
+        mostrarAviso("⚠️ DIGITE O KM ATUAL!", "erro");
         return;
       }
 
-      // Interface de carregamento
       btn.disabled = true;
-      loader.style.display = "inline-block";
-      exibirMensagem("⏳ Gravando dados na planilha...", "#555");
+      btn.innerText = "GRAVANDO...";
 
       try {
-        // Envio para o Google Apps Script via POST
-        const response = await fetch(URL_SCRIPT, {
+        await fetch(SCRIPT_URL, {
           method: "POST",
-          mode: "no-cors", // Necessário para evitar erros de CORS em alguns navegadores
-          headers: { "Content-Type": "application/json" },
+          mode: "no-cors",
           body: JSON.stringify(dados)
         });
 
-        // Como o modo é 'no-cors', não conseguimos ler o JSON de resposta com fetch, 
-        // mas se não deu erro de rede, o dado foi enviado.
-        exibirMensagem("✅ Registro enviado com sucesso!", "green");
-        limparCampos();
-
-      } catch (error) {
-        console.error(error);
-        exibirMensagem("❌ Erro de conexão ou permissão.", "red");
+        mostrarAviso("✅ REGISTRADO COM SUCESSO!", "success");
+        document.getElementById("km").value = "";
+        document.getElementById("litros").value = "";
+        document.getElementById("valor").value = "";
+      } catch (e) {
+        mostrarAviso("❌ ERRO DE CONEXÃO!", "erro");
       } finally {
         btn.disabled = false;
-        loader.style.display = "none";
+        btn.innerText = "SALVAR REGISTRO";
       }
-    }
-
-    function exibirMensagem(texto, cor) {
-      const msg = document.getElementById("msg");
-      msg.innerText = texto;
-      msg.style.color = cor;
-    }
-
-    function limparCampos() {
-      document.getElementById("km").value = "";
-      document.getElementById("litros").value = "";
-      document.getElementById("valor").value = "";
-      document.getElementById("obs").value = "";
     }
   </script>
 </body>
