@@ -5,47 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Frota Palhares</title>
   <style>
-    :root { --primary: #1a4d2e; --error: #d32f2f; --success: #2e7d32; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+    :root { --primary: #1a4d2e; --error: #c0392b; --success: #27ae60; }
+    body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; margin: 0; padding: 20px; }
     
-    .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.2); max-width: 400px; margin: auto; display: none; }
-    h2 { color: var(--primary); text-align: center; margin-bottom: 25px; }
+    .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-width: 420px; margin: auto; }
+    h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 26px; }
 
-    #aviso {
-      display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-      width: 90%; max-width: 500px; padding: 20px; border-radius: 12px; color: white;
-      text-align: center; font-size: 20px; font-weight: bold; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    /* Pop-up Modal Moderno */
+    #modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
     }
+    .modal-content {
+      background: white; padding: 40px; border-radius: 20px; text-align: center;
+      width: 85%; max-width: 400px; animation: bounce 0.4s ease;
+    }
+    @keyframes bounce { 0% {transform: scale(0.7);} 100% {transform: scale(1);} }
+    
+    #modal-msg { font-size: 24px; font-weight: bold; margin-bottom: 20px; display: block; }
+    .btn-fechar { background: #333; color: white; padding: 12px 30px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; }
 
     .field { margin-bottom: 15px; }
-    label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
-    input, select { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; font-size: 14px; }
+    input, select { width: 100%; padding: 16px; border: 2px solid #ddd; border-radius: 12px; box-sizing: border-box; font-size: 18px; outline: none; }
+    input:focus { border-color: var(--primary); }
     
-    button { 
-      width: 100%; background: var(--primary); color: white; border: none; 
-      padding: 18px; border-radius: 10px; font-size: 18px; font-weight: bold; 
-      cursor: pointer; margin-top: 10px;
-    }
-    
-    /* Tela de Login */
-    #login-screen { display: block; }
+    .btn-principal { width: 100%; background: var(--primary); color: white; border: none; padding: 20px; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .btn-principal:disabled { background: #999; }
   </style>
 </head>
 <body>
 
-  <div id="aviso"></div>
-
-  <div id="login-screen" class="card">
-    <h2>Acesso Frota 🔑</h2>
-    <div class="field">
-      <label>Senha de Acesso</label>
-      <input type="password" id="senha" placeholder="Digite a senha...">
+  <div id="modal">
+    <div class="modal-content">
+      <span id="modal-msg"></span>
+      <button class="btn-fechar" onclick="fecharModal()">OK, ENTENDI</button>
     </div>
-    <button onclick="entrar()">ENTRAR</button>
   </div>
 
-  <div id="form-screen" class="card">
+  <div class="card">
     <h2>FROTA PALHARES 🚚</h2>
+    
     <div class="field">
       <label>Veículo</label>
       <select id="veiculo">
@@ -53,102 +53,96 @@
         <option value="Doblò">Doblò</option>
       </select>
     </div>
+
     <div class="field">
-      <label>KM Atual</label>
-      <input type="number" id="km" inputmode="numeric">
+      <label>KM ATUAL</label>
+      <input type="number" id="km" inputmode="numeric" placeholder="000.000">
     </div>
+
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
       <div class="field">
         <label>Litros</label>
-        <input type="number" id="litros" step="0.01">
+        <input type="number" id="litros" step="0.01" inputmode="decimal">
       </div>
       <div class="field">
         <label>Valor Total R$</label>
-        <input type="number" id="valor" step="0.01">
+        <input type="number" id="valor" step="0.01" inputmode="decimal">
       </div>
     </div>
+
     <div class="field">
       <label>Observação</label>
-      <input type="text" id="obs">
+      <input type="text" id="obs" placeholder="Ex: Posto tal...">
     </div>
-    <button id="btn-save" onclick="salvar()">SALVAR REGISTRO</button>
-    <button onclick="sair()" style="background:#666; font-size:14px; padding:10px;">SAIR</button>
+
+    <button id="btn-save" class="btn-principal" onclick="processarEnvio()">SALVAR REGISTRO</button>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
-    const SENHA_CORRETA = "123"; // Altere para sua senha
+    const SCRIPT_URL = "SUA_URL_DO_GOOGLE_SCRIPT_AQUI"; 
 
-    // Verifica se já está logado ao abrir a página
-    window.onload = () => {
-      if(sessionStorage.getItem("logado") === "true") {
-        mostrarForm();
-      } else {
-        document.getElementById("login-screen").style.display = "block";
-      }
-    };
-
-    function entrar() {
-      const senha = document.getElementById("senha").value;
-      if(senha === SENHA_CORRETA) {
-        sessionStorage.setItem("logado", "true");
-        mostrarForm();
-      } else {
-        alert("Senha incorreta!");
-      }
+    function abrirModal(texto, cor) {
+      const modal = document.getElementById("modal");
+      const msg = document.getElementById("modal-msg");
+      msg.innerText = texto;
+      msg.style.color = cor;
+      modal.style.display = "flex";
     }
 
-    function mostrarForm() {
-      document.getElementById("login-screen").style.display = "none";
-      document.getElementById("form-screen").style.display = "block";
+    function fecharModal() {
+      document.getElementById("modal").style.display = "none";
     }
 
-    function sair() {
-      sessionStorage.removeItem("logado");
-      location.reload();
-    }
-
-    function mostrarAviso(texto, tipo) {
-      const aviso = document.getElementById("aviso");
-      aviso.innerText = texto;
-      aviso.style.display = "block";
-      aviso.style.backgroundColor = tipo === 'erro' ? 'var(--error)' : 'var(--success)';
-      setTimeout(() => { aviso.style.display = "none"; }, 4000);
-    }
-
-    async function salvar() {
+    async function processarEnvio() {
       const btn = document.getElementById("btn-save");
-      const dados = {
-        veiculo: document.getElementById("veiculo").value,
-        km: parseFloat(document.getElementById("km").value),
-        litros: parseFloat(document.getElementById("litros").value) || 0,
-        valor: parseFloat(document.getElementById("valor").value) || 0,
-        obs: document.getElementById("obs").value,
-        tipo: "Abastecimento"
-      };
+      const veiculo = document.getElementById("veiculo").value;
+      const kmDigitado = parseFloat(document.getElementById("km").value);
 
-      if(!dados.km) {
-        mostrarAviso("⚠️ DIGITE O KM!", "erro");
+      if(!kmDigitado) {
+        abrirModal("⚠️ DIGITE O KM!", "orange");
         return;
       }
 
       btn.disabled = true;
-      btn.innerText = "GRAVANDO...";
+      btn.innerText = "VERIFICANDO...";
 
       try {
-        // O segredo para salvar do GitHub é o mode: 'no-cors'
+        // Passo 1: Busca o último KM registrado na planilha (via GET)
+        const response = await fetch(`${SCRIPT_URL}?getUltimoKM=${veiculo}`);
+        const ultimoKM = parseFloat(await response.text());
+
+        // Passo 2: Validação da Trava
+        if (kmDigitado <= ultimoKM) {
+          abrirModal(`❌ ERRO: KM ATUAL (${kmDigitado}) É MENOR QUE O ÚLTIMO (${ultimoKM})!`, "var(--error)");
+          btn.disabled = false;
+          btn.innerText = "SALVAR REGISTRO";
+          return;
+        }
+
+        // Passo 3: Se passou na trava, envia os dados (via POST)
+        const dados = {
+          veiculo: veiculo,
+          km: kmDigitado,
+          litros: parseFloat(document.getElementById("litros").value) || 0,
+          valor: parseFloat(document.getElementById("valor").value) || 0,
+          obs: document.getElementById("obs").value,
+          tipo: "Abastecimento"
+        };
+
         await fetch(SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           body: JSON.stringify(dados)
         });
 
-        mostrarAviso("✅ SALVO NA PLANILHA!", "success");
+        abrirModal("✅ REGISTRO SALVO COM SUCESSO!", "var(--success)");
         document.getElementById("km").value = "";
         document.getElementById("litros").value = "";
         document.getElementById("valor").value = "";
+        document.getElementById("obs").value = "";
+
       } catch (e) {
-        mostrarAviso("❌ ERRO AO SALVAR!", "erro");
+        abrirModal("❌ ERRO DE CONEXÃO!", "var(--error)");
       } finally {
         btn.disabled = false;
         btn.innerText = "SALVAR REGISTRO";
