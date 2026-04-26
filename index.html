@@ -5,86 +5,108 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Frota Palhares</title>
   <style>
-    :root { --primary: #1a4d2e; --error: #c0392b; --success: #27ae60; --info: #2980b9; }
-    body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; margin: 0; padding: 20px; display: flex; justify-content: center; }
-    .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 100%; max-width: 420px; margin: auto; }
-    h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 26px; }
-    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-    .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 85%; max-width: 400px; animation: bounce 0.4s ease; }
-    @keyframes bounce { 0% {transform: scale(0.7);} 100% {transform: scale(1);} }
-    #modal-msg { font-size: 18px; font-weight: bold; margin-bottom: 10px; display: block; color: #333; }
-    #modal-sub { font-size: 42px; font-weight: 800; display: block; margin-bottom: 20px; }
-    .btn-fechar { background: var(--primary); color: white; padding: 15px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; width: 100%; }
-    .field { margin-bottom: 12px; }
+    :root { --primary: #1a4d2e; --info: #2980b9; --error: #c0392b; --success: #27ae60; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    h2 { color: var(--primary); text-align: center; margin-top: 0; }
+    
+    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 85%; max-width: 350px; }
+    #modal-sub { font-size: 45px; font-weight: 800; display: block; margin: 15px 0; color: var(--info); }
+    
+    .field { margin-bottom: 15px; }
     label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; font-size: 14px; }
-    input, select { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-    .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
+    input, select { width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; }
+    input:focus { border-color: var(--primary); }
+    
+    button { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    button:disabled { background: #999; }
+    .btn-close { background: #333; margin-top: 10px; }
   </style>
 </head>
 <body>
 
   <div id="modal">
     <div class="modal-content">
-      <span id="modal-msg"></span>
-      <span id="modal-sub"></span>
-      <button class="btn-fechar" onclick="fecharModal()">OK, FINALIZAR</button>
+      <span id="modal-msg" style="font-size: 18px; font-weight: bold; color: #555;">MÉDIA GERAL (RESUMO)</span>
+      <span id="modal-sub">...</span>
+      <button class="btn-close" onclick="location.reload()">OK, FINALIZAR</button>
     </div>
   </div>
 
   <div class="card">
     <h2>FROTA PALHARES 🚚</h2>
-    <div class="field"><label>Veículo</label><select id="veiculo"><option value="CrossFox">CrossFox (Red)</option><option value="Doblò">Doblò</option></select></div>
-    <div class="field"><label>KM ATUAL</label><input type="number" id="km" inputmode="numeric"></div>
+    
+    <div class="field">
+      <label>Veículo</label>
+      <select id="veiculo"><option>CrossFox</option><option>Doblò</option></select>
+    </div>
+
+    <div class="field">
+      <label>KM Atual</label>
+      <input type="number" id="km" inputmode="numeric">
+    </div>
+
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
       <div class="field"><label>Litros</label><input type="number" id="litros" step="0.01"></div>
-      <div class="field"><label>Valor Total R$</label><input type="number" id="valor" step="0.01"></div>
+      <div class="field"><label>Valor R$</label><input type="number" id="valor" step="0.01"></div>
     </div>
-    <div class="field"><label>Observação</label><input type="text" id="obs"></div>
-    <button id="btn-save" class="btn-save" onclick="processarEnvio()">SALVAR REGISTRO</button>
+
+    <div class="field">
+      <label>Observação</label>
+      <input type="text" id="obs" placeholder="Ex: Posto tal...">
+    </div>
+
+    <button id="btn" onclick="salvar()">SALVAR REGISTRO</button>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec";
+    const SCRIPT_URL = "SUA_URL_AQUI"; // <--- COLOQUE SUA URL DE IMPLANTAÇÃO AQUI
 
-    function abrirModal(titulo, destaque, cor) {
-      document.getElementById("modal-msg").innerText = titulo;
-      document.getElementById("modal-sub").innerText = destaque;
-      document.getElementById("modal-sub").style.color = cor;
-      document.getElementById("modal").style.display = "flex";
-    }
-
-    function fecharModal() { document.getElementById("modal").style.display = "none"; location.reload(); }
-
-    async function processarEnvio() {
-      const btn = document.getElementById("btn-save");
+    async function salvar() {
+      const btn = document.getElementById("btn");
       const v = document.getElementById("veiculo").value;
       const km = parseFloat(document.getElementById("km").value);
-      const l = parseFloat(document.getElementById("litros").value) || 0;
 
-      if(!km) return abrirModal("⚠️ ERRO", "DIGITE O KM", "orange");
+      if(!km) { alert("Informe o KM!"); return; }
 
       btn.disabled = true;
       btn.innerText = "GRAVANDO...";
 
       try {
-        const check = await fetch(`${SCRIPT_URL}?getUltimoKM=${v}`);
-        const ult = parseFloat(await check.text());
+        // 1. Consulta último KM para trava
+        const resCheck = await fetch(`${SCRIPT_URL}?getUltimoKM=${v}`);
+        const ult = parseFloat(await resCheck.text());
 
         if (km <= ult) {
-          btn.disabled = false;
-          btn.innerText = "SALVAR REGISTRO";
-          return abrirModal("❌ ERRO", `KM MENOR QUE ${ult}`, "var(--error)");
+          alert(`ERRO: KM atual deve ser maior que ${ult}`);
+          btn.disabled = false; btn.innerText = "SALVAR REGISTRO";
+          return;
         }
 
-        const dados = { veiculo: v, tipo: "Abastecimento", km: km, litros: l, valor: parseFloat(document.getElementById("valor").value)||0, obs: document.getElementById("obs").value };
+        // 2. Envia os dados para a planilha
+        const dados = {
+          veiculo: v,
+          km: km,
+          litros: parseFloat(document.getElementById("litros").value) || 0,
+          valor: parseFloat(document.getElementById("valor").value) || 0,
+          tipo: "Abastecimento",
+          obs: document.getElementById("obs").value
+        };
 
         await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(dados) });
 
-        // Como o mode é no-cors, simulamos a confirmação e avisamos da média global
-        abrirModal("✅ SALVO COM SUCESSO!", "CONFERIR RESUMO", "var(--success)");
+        // 3. Aguarda 1.5s (pro Sheets calcular) e busca a média da aba RESUMO
+        setTimeout(async () => {
+          const resMedia = await fetch(`${SCRIPT_URL}?getMediaResumo=${v}`);
+          const mediaResumo = await resMedia.text();
+          
+          document.getElementById("modal-sub").innerText = mediaResumo + " Km/L";
+          document.getElementById("modal").style.display = "flex";
+        }, 1500);
 
       } catch (e) {
-        abrirModal("❌ ERRO", "FALHA NA REDE", "var(--error)");
+        alert("Erro de conexão!");
         btn.disabled = false;
       }
     }
