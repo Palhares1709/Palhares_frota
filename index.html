@@ -22,9 +22,9 @@
     }
     @keyframes bounce { 0% {transform: scale(0.7);} 100% {transform: scale(1);} }
     
-    #modal-msg { font-size: 22px; font-weight: bold; margin-bottom: 15px; display: block; line-height: 1.4; }
-    #modal-sub { font-size: 48px; font-weight: 800; display: block; margin-bottom: 20px; color: var(--info); }
-    .btn-fechar { background: #333; color: white; padding: 15px 40px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 16px; }
+    #modal-msg { font-size: 20px; font-weight: bold; margin-bottom: 10px; display: block; color: #333; }
+    #modal-sub { font-size: 42px; font-weight: 800; display: block; margin-bottom: 20px; }
+    .btn-fechar { background: #333; color: white; padding: 15px 40px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 16px; width: 100%; }
 
     .field { margin-bottom: 12px; }
     label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; font-size: 14px; }
@@ -89,7 +89,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
+    const SCRIPT_URL = "SUA_URL_DO_GOOGLE_SCRIPT_AQUI"; 
 
     function abrirModal(titulo, destaque, corDestaque) {
       const modal = document.getElementById("modal");
@@ -121,28 +121,32 @@
       btn.innerText = "PROCESSANDO...";
 
       try {
-        // Busca o último KM para validação e cálculo da média local
+        // 1. Busca o último KM registrado na planilha para calcular a média
         const response = await fetch(`${SCRIPT_URL}?getUltimoKM=${veiculo}`);
         const ultimoKM = parseFloat(await response.text());
 
+        // Trava de segurança contra KM menor
         if (kmDigitado <= ultimoKM) {
-          abrirModal("❌ ERRO DE KM", `MENOR QUE O ÚLTIMO (${ultimoKM})`, "var(--error)");
+          abrirModal("❌ ERRO DE KM", `ÚLTIMO REGISTRO: ${ultimoKM} KM`, "var(--error)");
           btn.disabled = false;
           btn.innerText = "SALVAR REGISTRO";
           return;
         }
 
-        // Calcula a média para mostrar no Pop-up
-        let msgDestaque = "SALVO!";
+        // 2. Cálculo da Média deste abastecimento
+        let msgTitulo = "REGISTRO SALVO!";
+        let msgDestaque = "SUCESSO";
         let corDestaque = "var(--success)";
 
-        if (tipo === "Abastecimento" && litros > 0) {
+        if (tipo === "Abastecimento" && litros > 0 && ultimoKM > 0) {
           const kmPercorrido = kmDigitado - ultimoKM;
-          const mediaLocal = (kmPercorrido / litros).toFixed(2);
+          const mediaLocal = (kmPercorrido / litros).toFixed(2).replace('.', ',');
+          msgTitulo = "✅ SALVO! MÉDIA DESTE TANQUE:";
           msgDestaque = `${mediaLocal} Km/L`;
           corDestaque = "var(--info)";
         }
 
+        // 3. Envio dos dados para a planilha
         const dados = {
           veiculo: veiculo,
           tipo: tipo,
@@ -152,15 +156,14 @@
           obs: document.getElementById("obs").value
         };
 
-        // Envia para a planilha
         await fetch(SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           body: JSON.stringify(dados)
         });
 
-        // Mostra o resultado final no Modal
-        abrirModal("✅ REGISTRO SALVO! MÉDIA DESTE TANQUE:", msgDestaque, corDestaque);
+        // 4. Mostra o pop-up com a média calculada
+        abrirModal(msgTitulo, msgDestaque, corDestaque);
         
         // Limpa os campos
         document.getElementById("km").value = "";
