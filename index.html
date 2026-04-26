@@ -1,89 +1,173 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <base target="_top">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gestão de Frota - CMR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frota Palhares - Abastecimento</title>
   <style>
-    :root { --primary: #1a4d2e; --bg: #f4f7f6; --white: #ffffff; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .card { background: var(--white); padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-    h2 { color: var(--primary); text-align: center; margin-bottom: 20px; }
-    .field { margin-bottom: 15px; }
-    label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
-    input, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    button { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-    #msg { text-align: center; margin-top: 20px; font-weight: 600; min-height: 24px; }
+    :root { 
+      --primary: #1a4d2e; 
+      --bg: #f4f7f6; 
+      --accent: #2ecc71;
+    }
     
-    /* Esconde o formulário inicialmente */
-    #formulario { display: none; }
-    #telaLogin { display: block; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: var(--bg); 
+      margin: 0; 
+      padding: 15px; 
+      display: flex;
+      justify-content: center;
+    }
+
+    .card { 
+      background: white; 
+      padding: 25px; 
+      border-radius: 15px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+      width: 100%;
+      max-width: 400px; 
+    }
+
+    h2 { 
+      color: var(--primary); 
+      text-align: center; 
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .field { margin-bottom: 15px; }
+
+    label { 
+      display: block; 
+      font-weight: 600; 
+      margin-bottom: 8px; 
+      font-size: 14px; 
+      color: #444;
+    }
+
+    input, select { 
+      width: 100%; 
+      padding: 12px; 
+      border: 1px solid #ddd; 
+      border-radius: 8px; 
+      box-sizing: border-box; 
+      font-size: 16px;
+      outline: none;
+      transition: border 0.3s;
+    }
+
+    input:focus { border-color: var(--primary); }
+
+    .grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 12px; 
+    }
+
+    button { 
+      width: 100%; 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 16px; 
+      border-radius: 8px; 
+      font-size: 18px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      transition: background 0.3s, transform 0.1s;
+      margin-top: 10px;
+    }
+
+    button:active { transform: scale(0.98); }
+    button:disabled { background: #95a5a6; cursor: not-allowed; }
+
+    #msg { 
+      text-align: center; 
+      margin-top: 20px; 
+      font-weight: 600; 
+      min-height: 24px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .loader {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+      display: none;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <div id="telaLogin" class="card">
-    <h2>Acesso Restrito 🔒</h2>
-    <div class="field">
-      <label>Digite a Chave de Acesso</label>
-      <input type="password" id="chave" placeholder="****" inputmode="numeric">
-    </div>
-    <button onclick="verificarSenha()">ENTRAR</button>
-    <div id="msgLogin" style="text-align:center; color:red; margin-top:10px;"></div>
-  </div>
-
-  <div id="formulario" class="card">
+  <div class="card">
     <h2>Frota Palhares 🚚</h2>
+    
     <div class="field">
       <label>Veículo</label>
       <select id="veiculo">
         <option value="CrossFox">CrossFox (Red)</option>
-        <option value="Doblô">Doblò</option>
-        <option value="Outros">Caminhão 01</option>
+        <option value="Doblò">Doblò</option>
+        <option value="Caminhão 01">Caminhão 01</option>
       </select>
     </div>
+
     <div class="field">
-      <label>Tipo</label>
+      <label>Tipo de Registro</label>
       <select id="tipo">
         <option value="Abastecimento">Abastecimento</option>
         <option value="Manutenção">Manutenção</option>
       </select>
     </div>
+
     <div class="field">
       <label>KM Atual</label>
-      <input type="number" id="km" inputmode="numeric">
+      <input type="number" id="km" inputmode="numeric" placeholder="Ex: 125430">
     </div>
+
     <div class="grid">
-      <div class="field"><label>Litros</label><input type="number" id="litros" step="0.01" inputmode="decimal"></div>
-      <div class="field"><label>Valor Total</label><input type="number" id="valor" step="0.01" inputmode="decimal"></div>
+      <div class="field">
+        <label>Litros</label>
+        <input type="number" id="litros" step="0.01" inputmode="decimal" placeholder="0,00">
+      </div>
+      <div class="field">
+        <label>Valor Total (R$)</label>
+        <input type="number" id="valor" step="0.01" inputmode="decimal" placeholder="0,00">
+      </div>
     </div>
+
     <div class="field">
       <label>Observação</label>
-      <input type="text" id="obs">
+      <input type="text" id="obs" placeholder="Posto, marca do óleo, etc.">
     </div>
-    <button id="btn" onclick="salvar()">SALVAR REGISTRO</button>
+
+    <button id="btn" onclick="salvar()">
+      <span id="loader" class="loader"></span>
+      SALVAR REGISTRO
+    </button>
+    
     <div id="msg"></div>
   </div>
 
   <script>
+    // URL DO SEU GOOGLE APPS SCRIPT (SUBSTITUA AQUI!)
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec";
-    const SENHA_CORRETA = "1710"; // <--- MUDE SUA SENHA AQUI!
-
-    function verificarSenha() {
-      const senhaDigitada = document.getElementById("chave").value;
-      if(senhaDigitada === SENHA_CORRETA) {
-        document.getElementById("telaLogin").style.display = "none";
-        document.getElementById("formulario").style.display = "block";
-      } else {
-        document.getElementById("msgLogin").innerText = "❌ Chave incorreta!";
-      }
-    }
 
     async function salvar() {
       const btn = document.getElementById("btn");
       const msg = document.getElementById("msg");
+      const loader = document.getElementById("loader");
+      
+      // Captura de dados
       const dados = {
         veiculo: document.getElementById("veiculo").value,
         tipo: document.getElementById("tipo").value,
@@ -93,28 +177,51 @@
         obs: document.getElementById("obs").value
       };
 
-      if(!dados.km) {
-        msg.innerText = "⚠️ KM é obrigatório!";
-        msg.style.color = "red";
+      // Validação básica
+      if(!dados.km || dados.km <= 0) {
+        exibirMensagem("⚠️ Informe um KM válido!", "orange");
         return;
       }
 
+      // Interface de carregamento
       btn.disabled = true;
-      msg.innerText = "⏳ Gravando...";
-      
+      loader.style.display = "inline-block";
+      exibirMensagem("⏳ Gravando dados na planilha...", "#555");
+
       try {
-        await fetch(URL_SCRIPT, { method: "POST", mode: "no-cors", body: JSON.stringify(dados) });
-        msg.innerText = "✅ Registrado com Sucesso!";
-        msg.style.color = "green";
-        document.getElementById("km").value = "";
-        document.getElementById("litros").value = "";
-        document.getElementById("valor").value = "";
-        document.getElementById("obs").value = "";
-      } catch (err) {
-        msg.innerText = "❌ Erro ao salvar.";
+        // Envio para o Google Apps Script via POST
+        const response = await fetch(URL_SCRIPT, {
+          method: "POST",
+          mode: "no-cors", // Necessário para evitar erros de CORS em alguns navegadores
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dados)
+        });
+
+        // Como o modo é 'no-cors', não conseguimos ler o JSON de resposta com fetch, 
+        // mas se não deu erro de rede, o dado foi enviado.
+        exibirMensagem("✅ Registro enviado com sucesso!", "green");
+        limparCampos();
+
+      } catch (error) {
+        console.error(error);
+        exibirMensagem("❌ Erro de conexão ou permissão.", "red");
       } finally {
         btn.disabled = false;
+        loader.style.display = "none";
       }
+    }
+
+    function exibirMensagem(texto, cor) {
+      const msg = document.getElementById("msg");
+      msg.innerText = texto;
+      msg.style.color = cor;
+    }
+
+    function limparCampos() {
+      document.getElementById("km").value = "";
+      document.getElementById("litros").value = "";
+      document.getElementById("valor").value = "";
+      document.getElementById("obs").value = "";
     }
   </script>
 </body>
