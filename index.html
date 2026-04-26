@@ -7,32 +7,18 @@
   <style>
     :root { --primary: #1a4d2e; --error: #c0392b; --success: #27ae60; --info: #2980b9; }
     body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; margin: 0; padding: 20px; display: flex; justify-content: center; }
-    
     .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 100%; max-width: 420px; margin: auto; }
     h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 26px; }
-
-    /* Pop-up Modal Moderno */
-    #modal {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center;
-    }
-    .modal-content {
-      background: white; padding: 30px; border-radius: 20px; text-align: center;
-      width: 85%; max-width: 400px; animation: bounce 0.4s ease;
-    }
+    #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 85%; max-width: 400px; animation: bounce 0.4s ease; }
     @keyframes bounce { 0% {transform: scale(0.7);} 100% {transform: scale(1);} }
-    
-    #modal-msg { font-size: 20px; font-weight: bold; margin-bottom: 10px; display: block; color: #333; }
+    #modal-msg { font-size: 18px; font-weight: bold; margin-bottom: 10px; display: block; color: #333; }
     #modal-sub { font-size: 42px; font-weight: 800; display: block; margin-bottom: 20px; }
-    .btn-fechar { background: #333; color: white; padding: 15px 40px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; font-size: 16px; width: 100%; }
-
+    .btn-fechar { background: var(--primary); color: white; padding: 15px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; width: 100%; }
     .field { margin-bottom: 12px; }
     label { display: block; font-weight: bold; margin-bottom: 5px; color: #444; font-size: 14px; }
-    input, select { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; }
-    input:focus { border-color: var(--primary); }
-    
-    .btn-principal { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-    .btn-principal:disabled { background: #999; }
+    input, select { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+    .btn-save { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -41,141 +27,65 @@
     <div class="modal-content">
       <span id="modal-msg"></span>
       <span id="modal-sub"></span>
-      <button class="btn-fechar" onclick="fecharModal()">OK, ENTENDI</button>
+      <button class="btn-fechar" onclick="fecharModal()">OK, FINALIZAR</button>
     </div>
   </div>
 
   <div class="card">
     <h2>FROTA PALHARES 🚚</h2>
-    
-    <div class="field">
-      <label>Veículo</label>
-      <select id="veiculo">
-        <option value="CrossFox">CrossFox (Red)</option>
-        <option value="Doblò">Doblò</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>Tipo de Registro</label>
-      <select id="tipo">
-        <option value="Abastecimento">Abastecimento</option>
-        <option value="Manutenção">Manutenção</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>KM ATUAL</label>
-      <input type="number" id="km" inputmode="numeric" placeholder="000.000">
-    </div>
-
+    <div class="field"><label>Veículo</label><select id="veiculo"><option value="CrossFox">CrossFox (Red)</option><option value="Doblò">Doblò</option></select></div>
+    <div class="field"><label>KM ATUAL</label><input type="number" id="km" inputmode="numeric"></div>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-      <div class="field">
-        <label>Litros</label>
-        <input type="number" id="litros" step="0.01" inputmode="decimal">
-      </div>
-      <div class="field">
-        <label>Valor Total R$</label>
-        <input type="number" id="valor" step="0.01" inputmode="decimal">
-      </div>
+      <div class="field"><label>Litros</label><input type="number" id="litros" step="0.01"></div>
+      <div class="field"><label>Valor Total R$</label><input type="number" id="valor" step="0.01"></div>
     </div>
-
-    <div class="field">
-      <label>Observação</label>
-      <input type="text" id="obs" placeholder="Ex: Posto tal...">
-    </div>
-
-    <button id="btn-save" class="btn-principal" onclick="processarEnvio()">SALVAR REGISTRO</button>
+    <div class="field"><label>Observação</label><input type="text" id="obs"></div>
+    <button id="btn-save" class="btn-save" onclick="processarEnvio()">SALVAR REGISTRO</button>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec";
 
-    function abrirModal(titulo, destaque, corDestaque) {
-      const modal = document.getElementById("modal");
+    function abrirModal(titulo, destaque, cor) {
       document.getElementById("modal-msg").innerText = titulo;
-      const sub = document.getElementById("modal-sub");
-      sub.innerText = destaque;
-      sub.style.color = corDestaque;
-      modal.style.display = "flex";
+      document.getElementById("modal-sub").innerText = destaque;
+      document.getElementById("modal-sub").style.color = cor;
+      document.getElementById("modal").style.display = "flex";
     }
 
-    function fecharModal() {
-      document.getElementById("modal").style.display = "none";
-    }
+    function fecharModal() { document.getElementById("modal").style.display = "none"; location.reload(); }
 
     async function processarEnvio() {
       const btn = document.getElementById("btn-save");
-      const veiculo = document.getElementById("veiculo").value;
-      const tipo = document.getElementById("tipo").value;
-      const kmDigitado = parseFloat(document.getElementById("km").value);
-      const litros = parseFloat(document.getElementById("litros").value) || 0;
-      const valor = parseFloat(document.getElementById("valor").value) || 0;
+      const v = document.getElementById("veiculo").value;
+      const km = parseFloat(document.getElementById("km").value);
+      const l = parseFloat(document.getElementById("litros").value) || 0;
 
-      if(!kmDigitado) {
-        abrirModal("⚠️ ATENÇÃO", "DIGITE O KM!", "orange");
-        return;
-      }
+      if(!km) return abrirModal("⚠️ ERRO", "DIGITE O KM", "orange");
 
       btn.disabled = true;
-      btn.innerText = "PROCESSANDO...";
+      btn.innerText = "GRAVANDO...";
 
       try {
-        // 1. Busca o último KM registrado na planilha para calcular a média
-        const response = await fetch(`${SCRIPT_URL}?getUltimoKM=${veiculo}`);
-        const ultimoKM = parseFloat(await response.text());
+        const check = await fetch(`${SCRIPT_URL}?getUltimoKM=${v}`);
+        const ult = parseFloat(await check.text());
 
-        // Trava de segurança contra KM menor
-        if (kmDigitado <= ultimoKM) {
-          abrirModal("❌ ERRO DE KM", `ÚLTIMO REGISTRO: ${ultimoKM} KM`, "var(--error)");
+        if (km <= ult) {
           btn.disabled = false;
           btn.innerText = "SALVAR REGISTRO";
-          return;
+          return abrirModal("❌ ERRO", `KM MENOR QUE ${ult}`, "var(--error)");
         }
 
-        // 2. Cálculo da Média deste abastecimento
-        let msgTitulo = "REGISTRO SALVO!";
-        let msgDestaque = "SUCESSO";
-        let corDestaque = "var(--success)";
+        const dados = { veiculo: v, tipo: "Abastecimento", km: km, litros: l, valor: parseFloat(document.getElementById("valor").value)||0, obs: document.getElementById("obs").value };
 
-        if (tipo === "Abastecimento" && litros > 0 && ultimoKM > 0) {
-          const kmPercorrido = kmDigitado - ultimoKM;
-          const mediaLocal = (kmPercorrido / litros).toFixed(2).replace('.', ',');
-          msgTitulo = "✅ SALVO! MÉDIA DESTE TANQUE:";
-          msgDestaque = `${mediaLocal} Km/L`;
-          corDestaque = "var(--info)";
-        }
+        await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(dados) });
 
-        // 3. Envio dos dados para a planilha
-        const dados = {
-          veiculo: veiculo,
-          tipo: tipo,
-          km: kmDigitado,
-          litros: litros,
-          valor: valor,
-          obs: document.getElementById("obs").value
-        };
-
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          body: JSON.stringify(dados)
-        });
-
-        // 4. Mostra o pop-up com a média calculada
-        abrirModal(msgTitulo, msgDestaque, corDestaque);
-        
-        // Limpa os campos
-        document.getElementById("km").value = "";
-        document.getElementById("litros").value = "";
-        document.getElementById("valor").value = "";
-        document.getElementById("obs").value = "";
+        // Como o mode é no-cors, simulamos a confirmação e avisamos da média global
+        abrirModal("✅ SALVO COM SUCESSO!", "CONFERIR RESUMO", "var(--success)");
 
       } catch (e) {
-        abrirModal("❌ ERRO", "CONEXÃO FALHOU!", "var(--error)");
-      } finally {
+        abrirModal("❌ ERRO", "FALHA NA REDE", "var(--error)");
         btn.disabled = false;
-        btn.innerText = "SALVAR REGISTRO";
       }
     }
   </script>
