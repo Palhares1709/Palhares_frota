@@ -3,19 +3,104 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Importando fontes modernas do Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  
   <style>
-    :root { --primary: #2e7d32; --bg: #f4f7f6; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; justify-content: center; }
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-    h2 { color: var(--primary); text-align: center; margin-top: 0; }
-    .stats { background: #e8f5e9; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid var(--primary); }
-    .stats p { margin: 5px 0; font-size: 14px; color: #333; }
-    .field { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #666; }
-    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-    button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
-    button:disabled { background: #ccc; }
-    #msg { text-align: center; margin-top: 15px; font-weight: bold; font-size: 14px; }
+    :root { 
+      --primary: #2e7d32; 
+      --bg: #f0f2f5; 
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+    }
+    
+    body { 
+      font-family: 'Poppins', sans-serif; /* Fonte moderna aplicada */
+      background: var(--bg); 
+      margin: 0; 
+      padding: 20px; 
+      display: flex; 
+      justify-content: center; 
+      color: var(--text);
+    }
+
+    .card { 
+      background: var(--card-bg); 
+      padding: 25px; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+      width: 100%; 
+      max-width: 400px; 
+    }
+
+    h2 { 
+      color: var(--primary); 
+      text-align: center; 
+      margin-top: 0; 
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .stats { 
+      background: #f1f8e9; 
+      padding: 15px; 
+      border-radius: 12px; 
+      margin-bottom: 20px; 
+      border-left: 6px solid var(--primary); 
+    }
+
+    .stats p { 
+      margin: 5px 0; 
+      font-size: 14px; 
+      font-weight: 400;
+    }
+
+    .field { margin-bottom: 18px; }
+
+    label { 
+      display: block; 
+      margin-bottom: 6px; 
+      font-weight: 600; 
+      font-size: 12px; 
+      color: #7f8c8d; 
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select, textarea { 
+      width: 100%; 
+      padding: 12px; 
+      border: 1.5px solid #e0e0e0; 
+      border-radius: 10px; 
+      box-sizing: border-box; 
+      font-size: 15px; 
+      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    button { 
+      width: 100%; 
+      padding: 14px; 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      border-radius: 10px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      font-size: 16px; 
+      margin-top: 10px;
+      transition: transform 0.1s, background 0.3s;
+    }
+
+    button:active { transform: scale(0.98); }
+    button:disabled { background: #bdc3c7; }
+
+    #msg { text-align: center; margin-top: 15px; font-weight: 600; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -47,22 +132,22 @@
 
   <div class="field">
     <label>KM Atual</label>
-    <input type="number" id="km" placeholder="Digite o KM atual" inputmode="numeric">
+    <input type="number" id="km" placeholder="000.000" inputmode="numeric">
   </div>
 
   <div class="field">
     <label>Litros / Quantidade</label>
-    <input type="number" id="litros" step="0.01" placeholder="Ex: 45.50">
+    <input type="number" id="litros" step="0.01" placeholder="0,00">
   </div>
 
   <div class="field">
     <label>Valor Total (R$)</label>
-    <input type="number" id="valor" step="0.01" placeholder="Ex: 250.00">
+    <input type="number" id="valor" step="0.01" placeholder="R$ 0,00">
   </div>
 
   <div class="field">
     <label>Observação</label>
-    <textarea id="obs" rows="2" placeholder="Opcional..."></textarea>
+    <textarea id="obs" rows="2" placeholder="Notas sobre o serviço..."></textarea>
   </div>
 
   <button id="btn" onclick="salvar()">SALVAR REGISTRO</button>
@@ -70,8 +155,7 @@
 </div>
 
 <script>
-  // COLOQUE A URL DO GOOGLE ABAIXO
-  const WEB_APP_URL = "COLE_AQUI_SUA_URL_DO_GOOGLE";
+  const WEB_APP_URL = "COLE_AQUI_SUA_URL_DO_GOOGLE"; // Mantenha sua URL aqui
 
   window.onload = atualizarInfo;
 
@@ -102,7 +186,7 @@
 
     if (!dados.km || dados.km <= lastKm) {
       msg.innerText = "⚠️ Erro no KM!";
-      msg.style.color = "red";
+      msg.style.color = "#e74c3c";
       return;
     }
 
