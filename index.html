@@ -70,12 +70,11 @@
 </div>
 
 <script>
-  // COLOQUE ABAIXO A URL DO SEU GOOGLE APPS SCRIPT (TERMINADA EM /exec)
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec";
+  // COLOQUE A URL DO GOOGLE ABAIXO
+  const WEB_APP_URL = "COLE_AQUI_SUA_URL_DO_GOOGLE";
 
   window.onload = atualizarInfo;
 
-  // Busca KM e Média anterior ao carregar/mudar veículo
   function atualizarInfo() {
     const veiculo = document.getElementById("veiculo").value;
     fetch(`${WEB_APP_URL}?veiculo=${veiculo}`)
@@ -83,17 +82,17 @@
       .then(res => {
         document.getElementById("lastKm").innerText = res.km;
         document.getElementById("lastMedia").innerText = res.media;
-      })
-      .catch(err => console.error("Erro ao carregar:", err));
+      });
   }
 
   function salvar() {
     const btn = document.getElementById("btn");
     const msg = document.getElementById("msg");
     const lastKm = parseFloat(document.getElementById("lastKm").innerText) || 0;
+    const veiculo = document.getElementById("veiculo").value;
     
     const dados = {
-      veiculo: document.getElementById("veiculo").value,
+      veiculo: veiculo,
       tipo: document.getElementById("tipo").value,
       km: parseFloat(document.getElementById("km").value),
       litros: parseFloat(document.getElementById("litros").value) || 0,
@@ -101,15 +100,8 @@
       obs: document.getElementById("obs").value
     };
 
-    // Validações básicas
-    if (!dados.km) {
-      msg.innerText = "❌ Informe o KM!";
-      msg.style.color = "red";
-      return;
-    }
-
-    if (dados.km <= lastKm) {
-      msg.innerText = "⚠️ KM deve ser maior que " + lastKm;
+    if (!dados.km || dados.km <= lastKm) {
+      msg.innerText = "⚠️ Erro no KM!";
       msg.style.color = "red";
       return;
     }
@@ -117,43 +109,19 @@
     btn.disabled = true;
     msg.innerText = "⏳ Gravando...";
 
-    // 1. Envia os dados para salvar
-    fetch(WEB_APP_URL, {
-      method: "POST",
-      body: JSON.stringify(dados)
-    })
+    fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(dados) })
     .then(res => res.text())
     .then(res => {
       if (res === "Sucesso") {
-        // 2. Após salvar, busca a média geral da aba Resumo (Coluna D)
-        fetch(`${WEB_APP_URL}?getMediaResumo=${dados.veiculo}`)
-          .then(resMedia => resMedia.text())
+        fetch(`${WEB_APP_URL}?getMediaResumo=${veiculo}`)
+          .then(r => r.text())
           .then(mediaGeral => {
-            // Exibe o pop-up com a média atualizada da planilha
-            alert(`✅ Registro concluído!\n\nVeículo: ${dados.veiculo}\nTipo: ${dados.tipo}\n\n📊 Média Geral (Resumo): ${mediaGeral} km/l`);
-            
-            // Limpa campos e reseta interface
-            msg.innerText = "✅ Salvo com sucesso!";
-            msg.style.color = "green";
-            document.getElementById("km").value = "";
-            document.getElementById("litros").value = "";
-            document.getElementById("valor").value = "";
-            document.getElementById("obs").value = "";
-            atualizarInfo(); 
+            alert(`✅ Sucesso!\n\nVeículo: ${veiculo}\nMédia Geral Atualizada: ${mediaGeral} km/l`);
+            location.reload(); 
           });
-      } else {
-        msg.innerText = "❌ Erro ao salvar: " + res;
-        msg.style.color = "red";
       }
-      btn.disabled = false;
-    })
-    .catch(err => {
-      msg.innerText = "❌ Erro de conexão";
-      msg.style.color = "red";
-      btn.disabled = false;
     });
   }
 </script>
-
 </body>
 </html>
