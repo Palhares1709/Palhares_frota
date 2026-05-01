@@ -20,19 +20,21 @@
       background: var(--bg-gradient); 
       display: flex; 
       justify-content: center; 
-      align-items: center; 
+      align-items: flex-start; /* Alinhado ao topo para mobile */
       min-height: 100vh; 
       margin: 0; 
+      padding-top: 20px; /* Pequeno respiro no topo */
     }
     
     .card { 
       background: #ffffff; 
-      padding: 35px; 
+      padding: 20px 30px 30px 30px; /* Reduzi o padding superior de 35px para 20px */
       border-radius: 28px; 
       box-shadow: 0 25px 50px rgba(0,0,0,0.1); 
       width: 100%; 
       max-width: 420px; 
       border: 1px solid rgba(255,255,255,0.8);
+      margin-bottom: 20px;
     }
 
     h2 { 
@@ -40,21 +42,21 @@
       font-weight: 900; 
       letter-spacing: -1.5px; 
       color: var(--dark); 
-      margin-bottom: 25px; 
+      margin-top: 10px; /* Reduzi a margem do título */
+      margin-bottom: 20px; 
     }
 
-    /* ABAS COM CORES */
     .tabs { 
       display: flex; 
       gap: 8px; 
-      margin-bottom: 25px; 
+      margin-bottom: 20px; 
       background: #eef2f7; 
       padding: 6px; 
       border-radius: 14px; 
     }
     .tab-btn { 
       flex: 1; 
-      padding: 12px; 
+      padding: 10px; 
       border: none; 
       border-radius: 10px; 
       cursor: pointer; 
@@ -70,16 +72,15 @@
       box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3); 
     }
 
-    /* CARD DE ESTATÍSTICAS COLORIDO */
     .stats { 
       background: #f8fbff; 
-      padding: 18px; 
+      padding: 15px; 
       border-radius: 18px; 
-      margin-bottom: 25px; 
+      margin-bottom: 20px; 
       border: 1px solid #d1e3fa; 
     }
     .stats p { 
-      margin: 10px 0; 
+      margin: 8px 0; 
       font-size: 14px; 
       font-weight: 700; 
       color: #444; 
@@ -96,7 +97,7 @@
     
     label { 
       display: block; 
-      margin-bottom: 8px; 
+      margin-bottom: 6px; 
       font-weight: 700; 
       font-size: 11px; 
       text-transform: uppercase; 
@@ -106,10 +107,10 @@
 
     input, select, textarea { 
       width: 100%; 
-      padding: 14px; 
+      padding: 12px; 
       border-radius: 12px; 
       border: 2px solid #eef2f7; 
-      margin-bottom: 15px; 
+      margin-bottom: 12px; 
       font-family: 'Inter'; 
       font-size: 15px; 
       box-sizing: border-box; 
@@ -125,7 +126,7 @@
     
     #btn { 
       width: 100%; 
-      padding: 18px; 
+      padding: 16px; 
       background: var(--dark); 
       color: white; 
       border: none; 
@@ -134,21 +135,18 @@
       font-size: 16px; 
       cursor: pointer; 
       transition: 0.3s; 
-      margin-top: 10px; 
+      margin-top: 5px; 
       box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     }
     #btn:hover { 
       background: #000; 
       transform: translateY(-2px); 
-      box-shadow: 0 12px 20px rgba(0,0,0,0.15);
     }
     #btn:disabled { 
       background: #ccc; 
       cursor: not-allowed; 
-      transform: none; 
     }
 
-    /* Modal / Pop-up */
     .modal-overlay { 
       position: fixed; 
       top: 0; left: 0; width: 100%; height: 100%; 
@@ -165,7 +163,6 @@
       box-shadow: 0 30px 60px rgba(0,0,0,0.3);
       animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     }
-    @keyframes pop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .modal button { 
       background: var(--primary); 
       color: white; 
@@ -191,7 +188,7 @@
   
   <div class="stats">
     <p><span>📊 Último KM:</span> <span id="lastKm" style="color:var(--dark)">...</span></p>
-    <p><span>🏆 Média Total (Resumo):</span> <span id="lastMedia" style="color:var(--primary)">--</span></p>
+    <p><span>🏆 Média Total:</span> <span id="lastMedia" style="color:var(--primary)">--</span></p>
   </div>
 
   <label>Veículo</label>
@@ -203,12 +200,12 @@
   <label id="labelTipo">Dados do Abastecimento</label>
   <div id="camposDinamicos">
     <input type="number" id="km" placeholder="KM Atual">
-    <input type="number" id="litros" step="0.01" placeholder="Quantidade de Litros">
+    <input type="number" id="litros" step="0.01" placeholder="Litros">
     <input type="number" id="valor" step="0.01" placeholder="Valor Total R$">
   </div>
 
   <label>Observação</label>
-  <textarea id="obs" placeholder="Posto, peças trocadas, etc..."></textarea>
+  <textarea id="obs" placeholder="Posto, peças, etc..."></textarea>
 
   <button id="btn" onclick="salvar()">SALVAR REGISTRO</button>
 </div>
@@ -218,7 +215,7 @@
 </div>
 
 <script>
-  // COLOQUE SUA URL DO DEPLOY ABAIXO
+  // ATUALIZE COM SUA URL
   const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
   let kmReferencia = 0;
   let tipoAtual = "Abastecimento";
@@ -228,7 +225,6 @@
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('labelTipo').innerText = "Dados de " + tipo;
-    
     const campoLitros = document.getElementById('litros');
     campoLitros.style.display = (tipo === "Manutenção") ? "none" : "block";
   }
@@ -247,7 +243,7 @@
     const btnSalvar = document.getElementById('btn');
 
     if (km <= kmReferencia) {
-      abrirModal("KM Inválido ⚠️", "O KM deve ser maior que o último registro (" + kmReferencia + ").", "#d93025");
+      abrirModal("KM Inválido ⚠️", "O KM deve ser maior que " + kmReferencia + ".", "#d93025");
       return;
     }
 
@@ -266,7 +262,7 @@
       .then(txt => {
         btnSalvar.disabled = false;
         if (txt === "Sucesso") {
-          abrirModal("Sucesso! ✅", "Registro de " + tipoAtual + " salvo com sucesso.", "#188038");
+          abrirModal("Sucesso! ✅", "Registro salvo.", "#188038");
           document.getElementById('km').value = "";
           document.getElementById('litros').value = "";
           document.getElementById('valor').value = "";
