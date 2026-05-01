@@ -3,27 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frota Palhares | Gestão</title>
+  <title>Frota Palhares | Gestão 2026</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    :root { --primary: #1a73e8; --error: #d93025; --success: #188038; }
+    :root { --primary: #1a73e8; --error: #d93025; --success: #188038; --dark: #1a1a1a; }
     body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-    h2 { text-align: center; font-weight: 900; letter-spacing: -1.5px; color: #1a1a1a; margin-bottom: 25px; }
-    .stats { background: #f8f9fa; padding: 15px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #eee; }
-    .stats p { margin: 8px 0; font-size: 14px; font-weight: 700; color: #555; display: flex; justify-content: space-between; }
-    label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 1px; }
-    input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #efefef; margin-bottom: 15px; font-family: 'Inter'; box-sizing: border-box; }
+    
+    .card { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); width: 100%; max-width: 420px; }
+    h2 { text-align: center; font-weight: 900; letter-spacing: -1.5px; color: var(--dark); margin-bottom: 20px; }
+
+    /* ABAS DE NAVEGAÇÃO */
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; transition: 0.3s; background: transparent; color: #666; }
+    .tab-btn.active { background: white; color: var(--dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+    .stats { background: #f8f9fa; padding: 15px; border-radius: 16px; margin-bottom: 20px; border: 1px solid #eee; }
+    .stats p { margin: 6px 0; font-size: 14px; font-weight: 700; color: #555; display: flex; justify-content: space-between; }
+    
+    label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 1px; }
+    input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #efefef; margin-bottom: 12px; font-family: 'Inter'; font-size: 15px; box-sizing: border-box; }
     input:focus { border-color: var(--primary); outline: none; }
-    #btn { width: 100%; padding: 18px; background: #1a1a1a; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+    
+    #btn { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
     #btn:hover { background: #000; transform: translateY(-2px); }
     #btn:disabled { background: #ccc; cursor: not-allowed; }
 
-    /* Estilo do Pop-up (Modal) */
+    /* Pop-up */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; }
     .modal { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 300px; animation: pop 0.3s ease; }
     @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .modal h3 { margin-top: 0; font-weight: 900; }
     .modal button { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
@@ -31,10 +39,16 @@
 
 <div class="card">
   <h2>Frota Palhares 🚚</h2>
+
+  <!-- ABAS REATIVADAS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="mudarTipo('Abastecimento', this)">⛽ Abastecimento</button>
+    <button class="tab-btn" onclick="mudarTipo('Manutenção', this)">🛠️ Manutenção</button>
+  </div>
   
   <div class="stats">
-    <p><span>📊 Último KM:</span> <span id="lastKm" style="color:#1a1a1a">...</span></p>
-    <p><span>🏆 Média Total (Resumo):</span> <span id="lastMedia" style="color:#1a73e8">--</span></p>
+    <p><span>📊 Último KM:</span> <span id="lastKm" style="color:var(--dark)">...</span></p>
+    <p><span>🏆 Média Total (Resumo):</span> <span id="lastMedia" style="color:var(--primary)">--</span></p>
   </div>
 
   <label>Veículo</label>
@@ -43,12 +57,12 @@
     <option value="Doblò">Doblò</option>
   </select>
 
-  <label>KM Atual</label>
-  <input type="number" id="km" placeholder="0">
-
-  <label>Abastecimento</label>
-  <input type="number" id="litros" step="0.01" placeholder="Litros">
-  <input type="number" id="valor" step="0.01" placeholder="Valor Total R$">
+  <label id="labelTipo">Dados do Abastecimento</label>
+  <div id="camposDinamicos">
+    <input type="number" id="km" placeholder="KM Atual">
+    <input type="number" id="litros" step="0.01" placeholder="Litros">
+    <input type="number" id="valor" step="0.01" placeholder="Valor Total R$">
+  </div>
 
   <label>Observação</label>
   <textarea id="obs" placeholder="Detalhes..."></textarea>
@@ -57,17 +71,24 @@
 </div>
 
 <div id="modalOverlay" class="modal-overlay">
-  <div class="modal">
-    <h3 id="mTitle"></h3>
-    <p id="mText"></p>
-    <button onclick="fecharModal()">ENTENDIDO</button>
-  </div>
+  <div class="modal"><h3 id="mTitle"></h3><p id="mText"></p><button onclick="fecharModal()">ENTENDIDO</button></div>
 </div>
 
 <script>
-  // ATENÇÃO: Cole sua nova URL de Deploy aqui
   const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
   let kmReferencia = 0;
+  let tipoAtual = "Abastecimento";
+
+  function mudarTipo(tipo, btn) {
+    tipoAtual = tipo;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('labelTipo').innerText = "Dados de " + tipo;
+    
+    // Ajusta campos se for manutenção (opcional: esconder litros)
+    const campoLitros = document.getElementById('litros');
+    campoLitros.style.display = (tipo === "Manutenção") ? "none" : "block";
+  }
 
   function abrirModal(tit, tex, cor) {
     document.getElementById('mTitle').innerText = tit;
@@ -80,41 +101,32 @@
 
   function salvar() {
     const km = parseFloat(document.getElementById('km').value) || 0;
-    const btn = document.getElementById('btn');
-
-    // Validação local imediata
     if (km <= kmReferencia) {
-      abrirModal("KM Inválido ⚠️", "O KM deve ser maior que " + kmReferencia + ". O registro NÃO foi salvo.", "#d93025");
+      abrirModal("KM Inválido ⚠️", "O KM deve ser maior que " + kmReferencia + ".", "#d93025");
       return;
     }
 
-    btn.disabled = true;
+    document.getElementById('btn').disabled = true;
     const dados = {
       veiculo: document.getElementById('veiculo').value,
       km: km,
       litros: parseFloat(document.getElementById('litros').value) || 0,
       valor: parseFloat(document.getElementById('valor').value) || 0,
-      tipo: "Abastecimento",
+      tipo: tipoAtual,
       obs: document.getElementById('obs').value
     };
 
-    // Envio e tratamento de resposta do servidor
     fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
       .then(res => res.text())
       .then(txt => {
-        btn.disabled = false;
+        document.getElementById('btn').disabled = false;
         if (txt === "Sucesso") {
-          abrirModal("Sucesso! ✅", "Registro salvo corretamente na Frota Palhares.", "#188038");
+          abrirModal("Sucesso! ✅", "Registro de " + tipoAtual + " salvo.", "#188038");
           document.querySelectorAll('input, textarea').forEach(el => el.value = "");
           atualizarInfo();
         } else {
-          // Exibe o erro exato vindo do Apps Script
           abrirModal("Atenção ⚠️", txt, "#d93025");
         }
-      })
-      .catch(() => {
-        btn.disabled = false;
-        abrirModal("Erro de Conexão ❌", "Não foi possível enviar os dados.", "#d93025");
       });
   }
 
@@ -128,7 +140,6 @@
         document.getElementById('lastMedia').innerText = d.media + " km/l";
       });
   }
-
   window.onload = atualizarInfo;
 </script>
 </body>
