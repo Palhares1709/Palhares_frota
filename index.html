@@ -3,36 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frota Palhares | Sistema</title>
-  <!-- Fonte Moderna Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <title>Frota Palhares | 2026</title>
+  <!-- Fonte Inter - A mais moderna atualmente -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    :root { --primary: #1a73e8; --error: #d93025; --success: #188038; --bg: #f8f9fa; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-    .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 100%; max-width: 400px; border: 1px solid #eee; }
-    h2 { text-align: center; font-weight: 800; color: #202124; margin-bottom: 25px; letter-spacing: -1px; }
-    .stats { background: #f1f3f4; padding: 15px; border-radius: 12px; margin-bottom: 25px; }
-    .stats p { margin: 8px 0; font-size: 14px; font-weight: 600; color: #5f6368; display: flex; justify-content: space-between; }
-    .field { margin-bottom: 18px; }
-    label { display: block; margin-bottom: 8px; font-weight: 600; color: #3c4043; font-size: 13px; text-transform: uppercase; }
-    input, select, textarea { width: 100%; padding: 14px; border-radius: 10px; border: 2px solid #e8eaed; box-sizing: border-box; font-size: 15px; transition: all 0.2s; font-family: 'Inter', sans-serif; }
-    input:focus { border-color: var(--primary); outline: none; background: #fff; }
-    textarea { height: 80px; resize: none; }
-    
-    #btn { width: 100%; padding: 16px; background-color: #202124; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 16px; transition: 0.3s; margin-top: 10px; }
-    #btn:hover { background-color: #000; transform: translateY(-2px); }
-    #btn:disabled { background-color: #dadce0; cursor: not-allowed; transform: none; }
+    :root { --primary: #1a73e8; --error: #d93025; --success: #188038; }
+    body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    h2 { text-align: center; font-weight: 900; letter-spacing: -1.5px; color: #1a1a1a; margin-bottom: 30px; }
+    .stats { background: #f8f9fa; padding: 15px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #eee; }
+    .stats p { margin: 8px 0; font-size: 14px; font-weight: 700; color: #555; display: flex; justify-content: space-between; }
+    label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 1px; }
+    input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #efefef; margin-bottom: 20px; font-family: 'Inter', sans-serif; font-size: 15px; transition: 0.2s; box-sizing: border-box; }
+    input:focus { border-color: var(--primary); outline: none; }
+    #btn { width: 100%; padding: 18px; background: #1a1a1a; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; }
+    #btn:hover { background: #000; transform: translateY(-2px); }
+    #btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
 
-    .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; margin: 20px auto; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    /* Estilo do Pop-up (Alert Customizado) */
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
-    .modal { background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 300px; animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    /* POP-UP MODERNO */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 300px; animation: pop 0.3s ease; }
     @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .modal h3 { margin-top: 0; font-size: 18px; }
-    .modal p { color: #5f6368; font-size: 14px; line-height: 1.5; }
-    .modal button { background: var(--primary); color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 15px; }
+    .modal h3 { margin-top: 0; font-weight: 900; letter-spacing: -1px; }
+    .modal p { color: #666; font-size: 14px; line-height: 1.4; }
+    .modal button { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -41,135 +35,97 @@
   <h2>Frota Palhares 🚚</h2>
   
   <div class="stats">
-    <p><span>📊 Último KM:</span> <span id="lastKm" style="color:#202124">...</span></p>
-    <p><span>⛽ Média Ant.:</span> <span id="lastMedia" style="color:#202124">--</span></p>
+    <p><span>📊 Último Registro:</span> <span id="lastKm" style="color:#1a1a1a">...</span></p>
+    <p><span>⛽ Média Anterior:</span> <span id="lastMedia" style="color:#1a1a1a">--</span></p>
   </div>
 
-  <div class="field">
-    <label>Veículo</label>
-    <select id="veiculo" onchange="atualizarInfo()">
-      <option value="CrossFox">CrossFox (Red)</option>
-      <option value="Doblò">Doblò</option>
-      <option value="Outros">Caminhão 01</option>
-    </select>
-  </div>
+  <label>Veículo</label>
+  <select id="veiculo" onchange="atualizarInfo()">
+    <option value="CrossFox">CrossFox (Red)</option>
+    <option value="Doblò">Doblò</option>
+  </select>
 
-  <div class="field">
-    <label>Registro</label>
-    <select id="tipo">
-      <option value="Abastecimento">⛽ Abastecimento</option>
-      <option value="Manutenção">🛠️ Manutenção</option>
-    </select>
-  </div>
+  <label>KM Atual</label>
+  <input type="number" id="km" placeholder="0">
 
-  <div class="field">
-    <label>KM Atual</label>
-    <input type="number" id="km" placeholder="0">
-  </div>
+  <label>Abastecimento</label>
+  <input type="number" id="litros" step="0.01" placeholder="Litros">
+  <input type="number" id="valor" step="0.01" placeholder="Valor Total R$">
 
-  <div class="field">
-    <label>Litros</label>
-    <input type="number" id="litros" step="0.01" placeholder="0.00">
-  </div>
+  <label>Observação</label>
+  <textarea id="obs" placeholder="Detalhes..."></textarea>
 
-  <div class="field">
-    <label>Valor Total</label>
-    <input type="number" id="valor" step="0.01" placeholder="R$ 0,00">
-  </div>
-
-  <div class="field">
-    <label>Observação</label>
-    <textarea id="obs"></textarea>
-  </div>
-
-  <button id="btn" onclick="validarESalvar()">SALVAR REGISTRO</button>
-  <div id="loading" class="loader"></div>
+  <button id="btn" onclick="salvar()">SALVAR REGISTRO</button>
 </div>
 
-<!-- Janela de Pop-up -->
-<div id="overlay" class="overlay">
+<!-- Modal de Pop-up -->
+<div id="modalOverlay" class="modal-overlay">
   <div class="modal">
-    <h3 id="modalTitle">Título</h3>
-    <p id="modalText">Mensagem aqui...</p>
+    <h3 id="mTitle"></h3>
+    <p id="mText"></p>
     <button onclick="fecharModal()">ENTENDIDO</button>
   </div>
 </div>
 
 <script>
-  // ATENÇÃO: SUBSTITUA PELA SUA URL DE DEPLOY
+  // ATENÇÃO: COLE SUA URL DE DEPLOY ABAIXO
   const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
-  let kmReferencia = 0;
+  let kmMinimo = 0;
 
-  function mostrarModal(titulo, texto, cor) {
-    document.getElementById('modalTitle').innerText = titulo;
-    document.getElementById('modalTitle').style.color = cor;
-    document.getElementById('modalText').innerText = texto;
-    document.getElementById('overlay').style.display = 'flex';
+  function abrirModal(tit, tex, cor) {
+    document.getElementById('mTitle').innerText = tit;
+    document.getElementById('mTitle').style.color = cor;
+    document.getElementById('mText').innerText = tex;
+    document.getElementById('modalOverlay').style.display = 'flex';
   }
 
-  function fecharModal() {
-    document.getElementById('overlay').style.display = 'none';
-  }
+  function fecharModal() { document.getElementById('modalOverlay').style.display = 'none'; }
 
-  function validarESalvar() {
-    const kmDigitado = parseFloat(document.getElementById('km').value) || 0;
+  function salvar() {
+    const km = parseFloat(document.getElementById('km').value) || 0;
     
-    // TRAVA DE SEGURANÇA REAL
-    if (kmDigitado <= kmReferencia) {
-      mostrarModal("KM Inválido ⚠️", "O KM digitado (" + kmDigitado + ") não pode ser menor ou igual ao último registro (" + kmReferencia + "). Verifique o painel do veículo.", "#d93025");
+    // VALIDAÇÃO DE KM NO NAVEGADOR
+    if (km <= kmMinimo) {
+      abrirModal("KM Inválido ⚠️", "O KM digitado (" + km + ") deve ser maior que o último registro (" + kmMinimo + ").", "#d93025");
       return;
     }
 
-    const btn = document.getElementById('btn');
-    const loader = document.getElementById('loading');
-    
-    btn.disabled = true;
-    loader.style.display = "block";
-
+    document.getElementById('btn').disabled = true;
     const dados = {
       veiculo: document.getElementById('veiculo').value,
-      tipo: document.getElementById('tipo').value,
-      km: kmDigitado,
+      km: km,
       litros: parseFloat(document.getElementById('litros').value) || 0,
       valor: parseFloat(document.getElementById('valor').value) || 0,
-      obs: document.getElementById('obs').value || ""
+      tipo: "Abastecimento",
+      obs: document.getElementById('obs').value
     };
 
-    fetch(URL_SCRIPT, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify(dados)
-    })
-    .then(() => {
-      loader.style.display = "none";
-      btn.disabled = false;
-      mostrarModal("Sucesso! ✅", "Registro da Frota Palhares salvo com sucesso na planilha.", "#188038");
-      
-      // Limpa campos
-      document.getElementById('km').value = "";
-      document.getElementById('litros').value = "";
-      document.getElementById('valor').value = "";
-      document.getElementById('obs').value = "";
-      atualizarInfo();
-    })
-    .catch(() => {
-      loader.style.display = "none";
-      btn.disabled = false;
-      mostrarModal("Erro ❌", "Não foi possível conectar ao sistema.", "#d93025");
-    });
-  }
-
-  function atualizarInfo() {
-    const veiculo = document.getElementById('veiculo').value;
-    fetch(URL_SCRIPT + "?veiculo=" + veiculo)
-      .then(res => res.json())
-      .then(data => {
-        kmReferencia = parseFloat(data.km) || 0;
-        document.getElementById('lastKm').innerText = data.km + " km";
-        document.getElementById('lastMedia').innerText = data.media + " km/l";
+    fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dados) })
+      .then(() => {
+        abrirModal("Sucesso! ✅", "Registro da Frota Palhares salvo corretamente.", "#188038");
+        document.getElementById('km').value = "";
+        document.getElementById('litros').value = "";
+        document.getElementById('valor').value = "";
+        document.getElementById('obs').value = "";
+        document.getElementById('btn').disabled = false;
+        atualizarInfo();
+      })
+      .catch(() => {
+        abrirModal("Erro ❌", "Falha ao conectar com o servidor.", "#d93025");
+        document.getElementById('btn').disabled = false;
       });
   }
 
+  function atualizarInfo() {
+    const v = document.getElementById('veiculo').value;
+    fetch(URL_SCRIPT + "?veiculo=" + v)
+      .then(r => r.json())
+      .then(d => {
+        kmMinimo = parseFloat(d.km) || 0;
+        document.getElementById('lastKm').innerText = d.km + " km";
+        document.getElementById('lastMedia').innerText = d.media + " km/l";
+      });
+  }
   window.onload = atualizarInfo;
 </script>
 
