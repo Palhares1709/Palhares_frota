@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Controle de abastecimento/Manutenção | Gestão 2026</title>
+  <title>Frota Palhares | Gestão 2026</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root { 
@@ -20,15 +20,15 @@
       background: var(--bg-gradient); 
       display: flex; 
       justify-content: center; 
-      align-items: flex-start; /* Alinhado ao topo para mobile */
+      align-items: flex-start; 
       min-height: 100vh; 
       margin: 0; 
-      padding-top: 20px; /* Pequeno respiro no topo */
+      padding-top: 15px; 
     }
     
     .card { 
       background: #ffffff; 
-      padding: 20px 30px 30px 30px; /* Reduzi o padding superior de 35px para 20px */
+      padding: 15px 25px 25px 25px; 
       border-radius: 28px; 
       box-shadow: 0 25px 50px rgba(0,0,0,0.1); 
       width: 100%; 
@@ -42,26 +42,26 @@
       font-weight: 900; 
       letter-spacing: -1.5px; 
       color: var(--dark); 
-      margin-top: 10px; /* Reduzi a margem do título */
-      margin-bottom: 20px; 
+      margin-top: 5px; 
+      margin-bottom: 15px; 
     }
 
     .tabs { 
       display: flex; 
       gap: 8px; 
-      margin-bottom: 20px; 
+      margin-bottom: 15px; 
       background: #eef2f7; 
-      padding: 6px; 
+      padding: 5px; 
       border-radius: 14px; 
     }
     .tab-btn { 
       flex: 1; 
-      padding: 10px; 
+      padding: 8px; 
       border: none; 
       border-radius: 10px; 
       cursor: pointer; 
-      font-weight: 700; 
-      font-size: 13px; 
+      font-weight: 800; /* Texto mais negrito nas abas */
+      font-size: 12px; 
       transition: 0.3s; 
       background: transparent; 
       color: #5f6368; 
@@ -74,78 +74,71 @@
 
     .stats { 
       background: #f8fbff; 
-      padding: 15px; 
+      padding: 12px; 
       border-radius: 18px; 
-      margin-bottom: 20px; 
+      margin-bottom: 15px; 
       border: 1px solid #d1e3fa; 
     }
     .stats p { 
-      margin: 8px 0; 
+      margin: 6px 0; 
       font-size: 14px; 
-      font-weight: 700; 
-      color: #444; 
+      font-weight: 800; /* Texto das estatísticas mais negrito */
+      color: #333; 
       display: flex; 
       justify-content: space-between; 
       align-items: center;
     }
     .stats p span:last-child {
       background: #fff;
-      padding: 4px 10px;
+      padding: 3px 10px;
       border-radius: 8px;
       border: 1px solid #e0e6ed;
     }
     
     label { 
       display: block; 
-      margin-bottom: 6px; 
-      font-weight: 700; 
+      margin-bottom: 5px; 
+      font-weight: 900; /* Rótulos bem negritos */
       font-size: 11px; 
       text-transform: uppercase; 
-      color: #5f6368; 
-      letter-spacing: 1px; 
+      color: #444; 
+      letter-spacing: 0.5px; 
     }
 
     input, select, textarea { 
       width: 100%; 
-      padding: 12px; 
-      border-radius: 12px; 
+      padding: 8px 12px; /* Reduzi a altura das caixas (de 12px para 8px) */
+      border-radius: 10px; 
       border: 2px solid #eef2f7; 
-      margin-bottom: 12px; 
+      margin-bottom: 10px; 
       font-family: 'Inter'; 
       font-size: 15px; 
+      font-weight: 600; /* Texto dentro da caixa mais negrito */
       box-sizing: border-box; 
       background-color: #fcfdfe;
-      transition: all 0.3s;
+      transition: all 0.2s;
     }
     input:focus, select:focus, textarea:focus { 
       border-color: var(--primary); 
       outline: none; 
       background-color: #fff;
-      box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
     }
     
     #btn { 
       width: 100%; 
-      padding: 16px; 
+      padding: 14px; 
       background: var(--dark); 
       color: white; 
       border: none; 
       border-radius: 14px; 
-      font-weight: 700; 
+      font-weight: 800; 
       font-size: 16px; 
       cursor: pointer; 
       transition: 0.3s; 
       margin-top: 5px; 
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     }
-    #btn:hover { 
-      background: #000; 
-      transform: translateY(-2px); 
-    }
-    #btn:disabled { 
-      background: #ccc; 
-      cursor: not-allowed; 
-    }
+    #btn:hover { background: #000; }
+    #btn:disabled { background: #ccc; }
 
     .modal-overlay { 
       position: fixed; 
@@ -156,22 +149,22 @@
     }
     .modal { 
       background: white; 
-      padding: 35px; 
+      padding: 30px; 
       border-radius: 24px; 
       text-align: center; 
-      max-width: 320px; 
-      box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+      max-width: 300px; 
       animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     }
+    .modal h3 { font-weight: 900; }
     .modal button { 
       background: var(--primary); 
       color: white; 
       border: none; 
-      padding: 14px 35px; 
+      padding: 12px; 
       border-radius: 12px; 
-      font-weight: 700; 
+      font-weight: 800; 
       cursor: pointer; 
-      margin-top: 25px; 
+      margin-top: 20px; 
       width: 100%;
     }
   </style>
@@ -179,7 +172,7 @@
 <body>
 
 <div class="card">
-  <h2>Controle Abast/Manut 🚚</h2>
+  <h2>Frota Palhares 🚚</h2>
 
   <div class="tabs">
     <button id="tabAbast" class="tab-btn active" onclick="mudarTipo('Abastecimento', this)">⛽ Abastecimento</button>
@@ -187,7 +180,7 @@
   </div>
   
   <div class="stats">
-    <p><span>📊 Último KM:</span> <span id="lastKm" style="color:var(--dark)">...</span></p>
+    <p><span>📊 Último KM:</span> <span id="lastKm">...</span></p>
     <p><span>🏆 Média Total:</span> <span id="lastMedia" style="color:var(--primary)">--</span></p>
   </div>
 
@@ -215,7 +208,7 @@
 </div>
 
 <script>
-  // ATUALIZE COM SUA URL
+  // COLOQUE SUA URL DO DEPLOY ABAIXO
   const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
   let kmReferencia = 0;
   let tipoAtual = "Abastecimento";
@@ -262,11 +255,8 @@
       .then(txt => {
         btnSalvar.disabled = false;
         if (txt === "Sucesso") {
-          abrirModal("Sucesso! ✅", "Registro salvo.", "#188038");
-          document.getElementById('km').value = "";
-          document.getElementById('litros').value = "";
-          document.getElementById('valor').value = "";
-          document.getElementById('obs').value = "";
+          abrirModal("Sucesso! ✅", "Registro salvo com sucesso.", "#188038");
+          document.querySelectorAll('input, textarea').forEach(el => el.value = "");
           atualizarInfo();
         } else {
           abrirModal("Atenção ⚠️", txt, "#d93025");
