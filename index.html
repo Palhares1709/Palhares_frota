@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frota Palhares | Sistema</title>
+  <title>Frota Palhares | Gestão</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root { --primary: #1a73e8; --error: #d93025; --success: #188038; }
     body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
     .card { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-    h2 { text-align: center; font-weight: 900; letter-spacing: -1.5px; color: #1a1a1a; margin-bottom: 30px; }
+    h2 { text-align: center; font-weight: 900; letter-spacing: -1.5px; color: #1a1a1a; margin-bottom: 25px; }
     .stats { background: #f8f9fa; padding: 15px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #eee; }
     .stats p { margin: 8px 0; font-size: 14px; font-weight: 700; color: #555; display: flex; justify-content: space-between; }
     label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 1px; }
-    input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #efefef; margin-bottom: 18px; font-family: 'Inter', sans-serif; font-size: 15px; box-sizing: border-box; }
+    input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #efefef; margin-bottom: 15px; font-family: 'Inter'; box-sizing: border-box; }
     input:focus { border-color: var(--primary); outline: none; }
-    #btn { width: 100%; padding: 18px; background: #1a1a1a; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; }
+    #btn { width: 100%; padding: 18px; background: #1a1a1a; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
     #btn:hover { background: #000; transform: translateY(-2px); }
     #btn:disabled { background: #ccc; cursor: not-allowed; }
 
-    /* Pop-up */
+    /* Estilo do Pop-up (Modal) */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; }
     .modal { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 300px; animation: pop 0.3s ease; }
     @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal h3 { margin-top: 0; font-weight: 900; }
     .modal button { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
@@ -64,8 +65,9 @@
 </div>
 
 <script>
+  // ATENÇÃO: Cole sua nova URL de Deploy aqui
   const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
-  let kmMinimo = 0;
+  let kmReferencia = 0;
 
   function abrirModal(tit, tex, cor) {
     document.getElementById('mTitle').innerText = tit;
@@ -73,16 +75,20 @@
     document.getElementById('mText').innerText = tex;
     document.getElementById('modalOverlay').style.display = 'flex';
   }
+
   function fecharModal() { document.getElementById('modalOverlay').style.display = 'none'; }
 
   function salvar() {
     const km = parseFloat(document.getElementById('km').value) || 0;
-    if (km <= kmMinimo) {
-      abrirModal("KM Inválido ⚠️", "O KM deve ser maior que o último registro (" + kmMinimo + ").", "#d93025");
+    const btn = document.getElementById('btn');
+
+    // Validação local imediata
+    if (km <= kmReferencia) {
+      abrirModal("KM Inválido ⚠️", "O KM deve ser maior que " + kmReferencia + ". O registro NÃO foi salvo.", "#d93025");
       return;
     }
 
-    document.getElementById('btn').disabled = true;
+    btn.disabled = true;
     const dados = {
       veiculo: document.getElementById('veiculo').value,
       km: km,
@@ -92,15 +98,23 @@
       obs: document.getElementById('obs').value
     };
 
-    fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dados) })
-      .then(() => {
-        abrirModal("Sucesso! ✅", "Registro salvo com sucesso na aba Lancamentos.", "#188038");
-        document.getElementById('km').value = "";
-        document.getElementById('litros').value = "";
-        document.getElementById('valor').value = "";
-        document.getElementById('obs').value = "";
-        document.getElementById('btn').disabled = false;
-        atualizarInfo();
+    // Envio e tratamento de resposta do servidor
+    fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dados) })
+      .then(res => res.text())
+      .then(txt => {
+        btn.disabled = false;
+        if (txt === "Sucesso") {
+          abrirModal("Sucesso! ✅", "Registro salvo corretamente na Frota Palhares.", "#188038");
+          document.querySelectorAll('input, textarea').forEach(el => el.value = "");
+          atualizarInfo();
+        } else {
+          // Exibe o erro exato vindo do Apps Script
+          abrirModal("Atenção ⚠️", txt, "#d93025");
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        abrirModal("Erro de Conexão ❌", "Não foi possível enviar os dados.", "#d93025");
       });
   }
 
@@ -109,11 +123,12 @@
     fetch(URL_SCRIPT + "?veiculo=" + v)
       .then(r => r.json())
       .then(d => {
-        kmMinimo = parseFloat(d.km) || 0;
+        kmReferencia = parseFloat(d.km) || 0;
         document.getElementById('lastKm').innerText = d.km + " km";
         document.getElementById('lastMedia').innerText = d.media + " km/l";
       });
   }
+
   window.onload = atualizarInfo;
 </script>
 </body>
