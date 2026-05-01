@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frota Palhares | 2026</title>
-  <!-- Fonte Inter - A mais moderna atualmente -->
+  <title>Frota Palhares | Sistema</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     :root { --primary: #1a73e8; --error: #d93025; --success: #188038; }
@@ -14,18 +13,16 @@
     .stats { background: #f8f9fa; padding: 15px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #eee; }
     .stats p { margin: 8px 0; font-size: 14px; font-weight: 700; color: #555; display: flex; justify-content: space-between; }
     label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 11px; text-transform: uppercase; color: #888; letter-spacing: 1px; }
-    input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #efefef; margin-bottom: 20px; font-family: 'Inter', sans-serif; font-size: 15px; transition: 0.2s; box-sizing: border-box; }
+    input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #efefef; margin-bottom: 18px; font-family: 'Inter', sans-serif; font-size: 15px; box-sizing: border-box; }
     input:focus { border-color: var(--primary); outline: none; }
     #btn { width: 100%; padding: 18px; background: #1a1a1a; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; }
     #btn:hover { background: #000; transform: translateY(-2px); }
-    #btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+    #btn:disabled { background: #ccc; cursor: not-allowed; }
 
-    /* POP-UP MODERNO */
+    /* Pop-up */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; }
     .modal { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 300px; animation: pop 0.3s ease; }
     @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .modal h3 { margin-top: 0; font-weight: 900; letter-spacing: -1px; }
-    .modal p { color: #666; font-size: 14px; line-height: 1.4; }
     .modal button { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
@@ -35,8 +32,8 @@
   <h2>Frota Palhares 🚚</h2>
   
   <div class="stats">
-    <p><span>📊 Último Registro:</span> <span id="lastKm" style="color:#1a1a1a">...</span></p>
-    <p><span>⛽ Média Anterior:</span> <span id="lastMedia" style="color:#1a1a1a">--</span></p>
+    <p><span>📊 Último KM:</span> <span id="lastKm" style="color:#1a1a1a">...</span></p>
+    <p><span>🏆 Média Total (Resumo):</span> <span id="lastMedia" style="color:#1a73e8">--</span></p>
   </div>
 
   <label>Veículo</label>
@@ -58,7 +55,6 @@
   <button id="btn" onclick="salvar()">SALVAR REGISTRO</button>
 </div>
 
-<!-- Modal de Pop-up -->
 <div id="modalOverlay" class="modal-overlay">
   <div class="modal">
     <h3 id="mTitle"></h3>
@@ -68,7 +64,6 @@
 </div>
 
 <script>
-  // ATENÇÃO: COLE SUA URL DE DEPLOY ABAIXO
   const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbw7rwKhDnl5hAsyuJhi4iHNG3h78Tz1uwfDHpr5xl6DHsht1n4pY722hvZxQmY9caiapw/exec"; 
   let kmMinimo = 0;
 
@@ -78,15 +73,12 @@
     document.getElementById('mText').innerText = tex;
     document.getElementById('modalOverlay').style.display = 'flex';
   }
-
   function fecharModal() { document.getElementById('modalOverlay').style.display = 'none'; }
 
   function salvar() {
     const km = parseFloat(document.getElementById('km').value) || 0;
-    
-    // VALIDAÇÃO DE KM NO NAVEGADOR
     if (km <= kmMinimo) {
-      abrirModal("KM Inválido ⚠️", "O KM digitado (" + km + ") deve ser maior que o último registro (" + kmMinimo + ").", "#d93025");
+      abrirModal("KM Inválido ⚠️", "O KM deve ser maior que o último registro (" + kmMinimo + ").", "#d93025");
       return;
     }
 
@@ -102,17 +94,13 @@
 
     fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dados) })
       .then(() => {
-        abrirModal("Sucesso! ✅", "Registro da Frota Palhares salvo corretamente.", "#188038");
+        abrirModal("Sucesso! ✅", "Registro salvo com sucesso na aba Lancamentos.", "#188038");
         document.getElementById('km').value = "";
         document.getElementById('litros').value = "";
         document.getElementById('valor').value = "";
         document.getElementById('obs').value = "";
         document.getElementById('btn').disabled = false;
         atualizarInfo();
-      })
-      .catch(() => {
-        abrirModal("Erro ❌", "Falha ao conectar com o servidor.", "#d93025");
-        document.getElementById('btn').disabled = false;
       });
   }
 
@@ -128,6 +116,5 @@
   }
   window.onload = atualizarInfo;
 </script>
-
 </body>
 </html>
