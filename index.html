@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+  <!-- Link para o Manifesto -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a73e8">
+
+<!-- Script para registrar o Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log("Service Worker Registrado!"));
+  }
+</script>
   <link rel="manifest" href="manifest.json">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
