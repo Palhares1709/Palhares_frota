@@ -1,0 +1,15 @@
+{
+  "name": "Frota Palhares",
+  "short_name": "Frota",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2555/2555013.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
